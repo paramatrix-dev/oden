@@ -1,14 +1,14 @@
-use anvil::{Angle, Axis, Length, Part, Path, Plane, Sketch};
+use anvil::{Angle, Axis3D, Length, Part, Path, Plane, Sketch};
 use regex::Regex;
 
 use crate::{errors::Error, syntax::Span};
 
-use super::{Type, inner_value::InnerValue};
+use super::{inner_value::InnerValue, Type};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Value {
     Angle(Angle),
-    Axis(Axis),
+    Axis(Axis3D),
     Length(Length),
     Number(f64),
     Part(Part),

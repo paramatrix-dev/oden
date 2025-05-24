@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use anvil::Axis;
+use anvil::Axis3D;
 
 use crate::{
-    Value,
     errors::Error,
     syntax::Span,
     values::{InnerValue, Type},
+    Value,
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -25,9 +25,9 @@ impl Type for AxisConstructor {
 impl InnerValue for AxisConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         match method {
-            "X" => Ok(Value::Axis(Axis::x())),
-            "Y" => Ok(Value::Axis(Axis::y())),
-            "Z" => Ok(Value::Axis(Axis::z())),
+            "X" => Ok(Value::Axis(Axis3D::x())),
+            "Y" => Ok(Value::Axis(Axis3D::y())),
+            "Z" => Ok(Value::Axis(Axis3D::z())),
             _ => Err(Error::UnknownMethod(method.into(), span)),
         }
     }
@@ -44,7 +44,7 @@ fn construct(_: &[Value], _: Span) -> Result<Value, Error> {
 mod tests {
     use crate::{
         namespaces::PartNamespace,
-        syntax::{Expression, tokenize},
+        syntax::{tokenize, Expression},
     };
 
     use super::*;
@@ -56,6 +56,6 @@ mod tests {
     #[test]
     fn xy() {
         let input = "Axis.X()";
-        assert_eq!(eval_str(input), Ok(Value::Axis(Axis::x())))
+        assert_eq!(eval_str(input), Ok(Value::Axis(Axis3D::x())))
     }
 }

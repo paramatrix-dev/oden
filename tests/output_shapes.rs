@@ -1,4 +1,4 @@
-use anvil::{Axis, Cuboid, Cylinder, Path, Plane, Rectangle, Sphere, angle, length, point};
+use anvil::{angle, length, point, Axis3D, Cuboid, Cylinder, Path, Plane, Rectangle, Sphere};
 use oden::compile::compile_input;
 
 #[test]
@@ -218,7 +218,7 @@ fn test_cuboid_rotate_around() {
         ";
     assert_eq!(
         compile_input(text, "".into()),
-        Ok(Cuboid::from_m(1, 2, 3).rotate_around(Axis::x(), angle!(90 deg)))
+        Ok(Cuboid::from_m(1., 2., 3.).rotate_around(Axis3D::x(), angle!(90 deg)))
     )
 }
 
@@ -230,8 +230,8 @@ fn test_cuboid_circular_pattern() {
         ";
     assert_eq!(
         compile_input(text, "".into()),
-        Ok(Cuboid::from_m(1, 1, 1)
+        Ok(Cuboid::from_m(1., 1., 1.)
             .move_to(point!(1 m, 1 m, 1 m))
-            .circular_pattern(Axis::z(), 4))
+            .circular_pattern(Axis3D::z(), 4))
     )
 }
