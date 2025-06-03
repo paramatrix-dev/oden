@@ -70,6 +70,15 @@ pub enum Error {
     /// ```
     FunctionIsNotMethod(Span),
 
+    /// Occurs when a value or type is called that can not be constructed using a call.
+    ///
+    /// # Example
+    /// ```oden
+    /// part MyPart:
+    ///     Axis()  // Axis can not yet be constructed via call
+    /// ```
+    NotCallable(String, Span),
+
     /// Occurs when a part could not be written as an STL file.
     StlWrite(PathBuf),
 

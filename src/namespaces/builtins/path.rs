@@ -1,6 +1,6 @@
 use anvil::{Path, point};
 
-use crate::{Error, Span, Type, Instance, Value, check_args};
+use crate::{Error, Instance, Span, Type, Value, check_args};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PathConstructor;
@@ -33,16 +33,9 @@ impl Instance for PathConstructor {
 mod tests {
     use anvil::IntoLength;
 
-    use crate::{
-        namespaces::PartNamespace,
-        syntax::{Expression, tokenize},
-    };
+    use crate::eval_str;
 
     use super::*;
-
-    fn eval_str(input: &str) -> Result<Value, Error> {
-        Expression::from_tokens(&tokenize(input, &"".into())?)?.evaluate(&PartNamespace::new())
-    }
 
     #[test]
     fn at() {

@@ -9,10 +9,10 @@ mod values;
 pub use compile::compile_input;
 pub use errors::Error;
 pub use namespaces::PartNamespace;
-pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, tokenize};
+pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, eval_str, tokenize};
 pub use values::{
     Value,
-    traits::{Type, Instance, check_args},
+    traits::{Instance, Type, check_args},
 };
 
 /// Compile an oden file and write the resulting shape into an STEP file.

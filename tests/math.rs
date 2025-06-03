@@ -1,9 +1,5 @@
 use anvil::{Cuboid, IntoLength};
-use oden::{Error, Expression, PartNamespace, Value, compile_input, tokenize};
-
-fn eval_str(input: &str) -> Result<Value, Error> {
-    Expression::from_tokens(&tokenize(input, &"".into())?)?.evaluate(&PartNamespace::new())
-}
+use oden::{Value, compile_input, eval_str};
 
 #[test]
 fn test_addition() {

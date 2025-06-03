@@ -5,8 +5,8 @@ use std::fmt::Debug;
 
 pub trait Type: Instance + Debug + DynClone {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error>;
-    fn for_namespace(&self) -> (String, Value);
     fn name(&self) -> String;
+    fn for_namespace(&self) -> (String, Value);
 }
 
 dyn_clone::clone_trait_object!(Type);
