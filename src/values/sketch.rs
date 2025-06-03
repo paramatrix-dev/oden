@@ -1,8 +1,8 @@
-use anvil::{Point2D, Sketch};
+use anvil::{point, Sketch};
 
 use crate::{errors::Error, syntax::Span};
 
-use super::{Value, check_args, inner_value::InnerValue};
+use super::{check_args, inner_value::InnerValue, Value};
 
 impl InnerValue for Sketch {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
@@ -18,7 +18,7 @@ impl InnerValue for Sketch {
                 check_args(args, vec!["Plane", "Length"], span.clone())?;
                 match args {
                     [Value::Plane(plane), Value::Length(thickness)] => Ok(Value::Part(
-                        Error::from_anvil(self.extrude(plane, *thickness), Some(span))?,
+                        Error::from_anvil(self.extrude(*plane, *thickness), Some(span))?,
                     )),
                     _ => unreachable!(),
                 }
@@ -34,7 +34,7 @@ impl InnerValue for Sketch {
                 check_args(args, vec!["Length", "Length"], span)?;
                 match args {
                     [Value::Length(x), Value::Length(y)] => {
-                        Ok(Value::Sketch(self.move_to(Point2D::new(*x, *y))))
+                        Ok(Value::Sketch(self.move_to(point!(*x, *y))))
                     }
                     _ => unreachable!(),
                 }

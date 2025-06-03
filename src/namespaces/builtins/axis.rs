@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use anvil::Axis3D;
+use anvil::Axis;
 
 use crate::{
     errors::Error,
@@ -25,9 +25,9 @@ impl Type for AxisConstructor {
 impl InnerValue for AxisConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         match method {
-            "X" => Ok(Value::Axis(Axis3D::x())),
-            "Y" => Ok(Value::Axis(Axis3D::y())),
-            "Z" => Ok(Value::Axis(Axis3D::z())),
+            "X" => Ok(Value::Axis(Axis::<3>::x())),
+            "Y" => Ok(Value::Axis(Axis::<3>::y())),
+            "Z" => Ok(Value::Axis(Axis::<3>::z())),
             _ => Err(Error::UnknownMethod(method.into(), span)),
         }
     }
@@ -56,6 +56,6 @@ mod tests {
     #[test]
     fn xy() {
         let input = "Axis.X()";
-        assert_eq!(eval_str(input), Ok(Value::Axis(Axis3D::x())))
+        assert_eq!(eval_str(input), Ok(Value::Axis(Axis::<3>::x())))
     }
 }

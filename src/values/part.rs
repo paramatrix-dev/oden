@@ -1,10 +1,10 @@
-use anvil::{Part, Point3D};
+use anvil::{point, Part};
 
 use crate::{errors::Error, syntax::Span};
 
 use super::{
+    inner_value::{check_args, InnerValue},
     Value,
-    inner_value::{InnerValue, check_args},
 };
 
 impl InnerValue for Part {
@@ -37,7 +37,7 @@ impl InnerValue for Part {
                 check_args(args, vec!["Length", "Length", "Length"], span)?;
                 match args {
                     [Value::Length(x), Value::Length(y), Value::Length(z)] => {
-                        Ok(Value::Part(self.move_to(Point3D::new(*x, *y, *z))))
+                        Ok(Value::Part(self.move_to(point!(*x, *y, *z))))
                     }
                     _ => unreachable!(),
                 }

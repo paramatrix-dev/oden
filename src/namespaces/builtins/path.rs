@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use anvil::{Path, Point2D};
+use anvil::{point, Path};
 
 use crate::{
-    Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type, check_args},
+    values::{check_args, InnerValue, Type},
+    Value,
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -35,18 +35,18 @@ impl InnerValue for PathConstructor {
 fn construct(args: &[Value], span: Span) -> Result<Value, Error> {
     check_args(args, vec!["Length", "Length"], span)?;
     match args {
-        [Value::Length(x), Value::Length(y)] => Ok(Value::Path(Path::at(Point2D::new(*x, *y)))),
+        [Value::Length(x), Value::Length(y)] => Ok(Value::Path(Path::at(point!(*x, *y)))),
         _ => unreachable!(),
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use anvil::point;
+    use anvil::IntoLength;
 
     use crate::{
         namespaces::PartNamespace,
-        syntax::{Expression, tokenize},
+        syntax::{tokenize, Expression},
     };
 
     use super::*;
@@ -58,6 +58,9 @@ mod tests {
     #[test]
     fn at() {
         let input = "Path(1m, 2m)";
-        assert_eq!(eval_str(input), Ok(Value::Path(Path::at(point!(1 m, 2 m)))))
+        assert_eq!(
+            eval_str(input),
+            Ok(Value::Path(Path::at(point!(1.m(), 2.m()))))
+        )
     }
 }

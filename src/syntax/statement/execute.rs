@@ -45,10 +45,10 @@ fn resolve_receiver(receiver: Expression) -> Result<String, Error> {
 mod tests {
     use super::*;
     use crate::{
-        syntax::{Span, expression::ExprKind},
+        syntax::{expression::ExprKind, Span},
         values::Value,
     };
-    use anvil::{Cuboid, Length, length};
+    use anvil::{Cuboid, IntoLength, Length};
 
     #[test]
     fn part_declaration() {
@@ -89,17 +89,10 @@ mod tests {
         );
         let mut namespace = PartNamespace::new().insert_clone(
             "box".into(),
-            Value::Part(Cuboid::from_dim(
-                length!(5 mm),
-                length!(6 mm),
-                length!(7 mm),
-            )),
+            Value::Part(Cuboid::from_dim(5.mm(), 6.mm(), 7.mm())),
         );
 
         assert!(statement.execute(&mut namespace).is_ok());
-        assert_eq!(
-            namespace.part(),
-            Cuboid::from_dim(length!(5 mm), length!(6 mm), length!(7 mm),)
-        )
+        assert_eq!(namespace.part(), Cuboid::from_dim(5.mm(), 6.mm(), 7.mm(),))
     }
 }

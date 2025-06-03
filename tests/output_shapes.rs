@@ -1,4 +1,4 @@
-use anvil::{angle, length, point, Axis3D, Cuboid, Cylinder, Path, Plane, Rectangle, Sphere};
+use anvil::{point, Axis, Cuboid, Cylinder, IntoAngle, IntoLength, Path, Plane, Rectangle, Sphere};
 use oden::compile::compile_input;
 
 #[test]
@@ -28,7 +28,7 @@ fn test_sphere() {
             part.add(Sphere(5mm))
         ";
     let actual = compile_input(text, "".into());
-    assert_eq!(actual, Ok(Sphere::from_radius(length!(5 mm))))
+    assert_eq!(actual, Ok(Sphere::from_radius(5.mm())))
 }
 
 #[test]
@@ -38,10 +38,7 @@ fn test_cylinder() {
             part.add(Cylinder(5mm, 6mm))
         ";
     let actual = compile_input(text, "".into());
-    assert_eq!(
-        actual,
-        Ok(Cylinder::from_radius(length!(5 mm), length!(6 mm)))
-    )
+    assert_eq!(actual, Ok(Cylinder::from_radius(5.mm(), 6.mm())))
 }
 
 #[test]
@@ -128,7 +125,7 @@ fn test_move_to() {
         ";
     assert_eq!(
         compile_input(text, "".into()),
-        Ok(Cuboid::from_mm(5., 5., 5.).move_to(point!(1 mm, 1 mm, 1 mm)))
+        Ok(Cuboid::from_mm(5., 5., 5.).move_to(point!(1.mm(), 1.mm(), 1.mm())))
     )
 }
 
@@ -185,8 +182,8 @@ fn test_rectangle_extrude() {
         ";
     assert_eq!(
         compile_input(text, "".into()),
-        Ok(Rectangle::from_dim(length!(5 mm), length!(6 mm))
-            .extrude(&Plane::xy(), length!(7 mm))
+        Ok(Rectangle::from_dim(5.mm(), 6.mm())
+            .extrude(Plane::xy(), 7.mm())
             .unwrap())
     )
 }
@@ -200,12 +197,12 @@ fn test_rectangular_path_extrude() {
         ";
     assert_eq!(
         compile_input(text, "".into()),
-        Ok(Path::at(point!(0 m, 0 m))
-            .line_to(point!(1 m, 0 m))
-            .line_to(point!(1 m, 1 m))
-            .line_to(point!(0 m, 1 m))
+        Ok(Path::at(point!(0.m(), 0.m()))
+            .line_to(point!(1.m(), 0.m()))
+            .line_to(point!(1.m(), 1.m()))
+            .line_to(point!(0.m(), 1.m()))
             .close()
-            .extrude(&Plane::xy(), length!(2 m))
+            .extrude(Plane::xy(), 2.m())
             .unwrap())
     )
 }
@@ -218,7 +215,7 @@ fn test_cuboid_rotate_around() {
         ";
     assert_eq!(
         compile_input(text, "".into()),
-        Ok(Cuboid::from_m(1., 2., 3.).rotate_around(Axis3D::x(), angle!(90 deg)))
+        Ok(Cuboid::from_m(1., 2., 3.).rotate_around(Axis::<3>::x(), 90.deg()))
     )
 }
 
@@ -231,7 +228,7 @@ fn test_cuboid_circular_pattern() {
     assert_eq!(
         compile_input(text, "".into()),
         Ok(Cuboid::from_m(1., 1., 1.)
-            .move_to(point!(1 m, 1 m, 1 m))
-            .circular_pattern(Axis3D::z(), 4))
+            .move_to(point!(1.m(), 1.m(), 1.m()))
+            .circular_pattern(Axis::<3>::z(), 4))
     )
 }
