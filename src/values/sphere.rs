@@ -18,10 +18,34 @@ impl Type for Sphere {
     }
 }
 impl Instance for Sphere {
-    fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
-        Err(Error::FunctionIsNotMethod(span))
-    }
     fn type_str(&self) -> String {
         "Type".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anvil::IntoLength;
+
+    use crate::eval_str;
+
+    use super::*;
+
+    #[test]
+    fn call() {
+        let actual = eval_str("Sphere(1m)");
+        assert_eq!(actual, Ok(Value::Part(Sphere::from_radius(1.m()))))
+    }
+
+    #[test]
+    fn unknown_method() {
+        let actual = eval_str("Sphere.UNKNOWN()");
+        assert_eq!(
+            actual,
+            Err(Error::UnknownMethod(
+                "UNKNOWN".into(),
+                Span(0, 16, "".into())
+            ))
+        )
     }
 }

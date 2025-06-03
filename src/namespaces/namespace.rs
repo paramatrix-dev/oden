@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-use anvil::{Circle, Cuboid, Cylinder, Part, Rectangle, Sphere};
+use anvil::{Circle, Cube, Cuboid, Cylinder, Part, Rectangle, Sphere};
 
 use crate::{AxisType, Type, Value};
 
-use super::builtins::{Cube, PathConstructor, PlaneConstructor};
+use super::builtins::{PathConstructor, PlaneConstructor};
 
 /// A hashmap containing all accessible variables and functions.
 ///

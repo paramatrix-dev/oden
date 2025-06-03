@@ -64,4 +64,16 @@ mod tests {
         let actual = eval_str("Axis.Z()");
         assert_eq!(actual, Ok(Value::Axis(Axis::<3>::z())))
     }
+
+    #[test]
+    fn unknown_method() {
+        let actual = eval_str("Axis.UNKNOWN()");
+        assert_eq!(
+            actual,
+            Err(Error::UnknownMethod(
+                "UNKNOWN".into(),
+                Span(0, 14, "".into())
+            ))
+        )
+    }
 }
