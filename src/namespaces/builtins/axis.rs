@@ -1,19 +1,17 @@
-use std::sync::Arc;
-
 use anvil::Axis;
 
 use crate::{
+    Value,
     errors::Error,
     syntax::Span,
     values::{InnerValue, Type},
-    Value,
 };
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AxisConstructor;
 impl Type for AxisConstructor {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, _: &[Value], _: Span) -> Result<Value, Error> {
+        unimplemented!()
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -44,7 +42,7 @@ fn construct(_: &[Value], _: Span) -> Result<Value, Error> {
 mod tests {
     use crate::{
         namespaces::PartNamespace,
-        syntax::{tokenize, Expression},
+        syntax::{Expression, tokenize},
     };
 
     use super::*;

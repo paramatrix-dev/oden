@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anvil::Cuboid;
 
 use crate::{
@@ -10,8 +8,14 @@ use crate::{
 };
 
 impl Type for Cuboid {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
+        check_args(args, vec!["Length", "Length", "Length"], span)?;
+        match args {
+            [Value::Length(x), Value::Length(y), Value::Length(z)] => {
+                Ok(Value::Part(Cuboid::from_dim(*x, *y, *z)))
+            }
+            _ => unreachable!(),
+        }
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -26,15 +30,5 @@ impl InnerValue for Cuboid {
     }
     fn type_str(&self) -> String {
         "Type".into()
-    }
-}
-
-fn construct(args: &[Value], span: Span) -> Result<Value, Error> {
-    check_args(args, vec!["Length", "Length", "Length"], span)?;
-    match args {
-        [Value::Length(x), Value::Length(y), Value::Length(z)] => {
-            Ok(Value::Part(Cuboid::from_dim(*x, *y, *z)))
-        }
-        _ => unreachable!(),
     }
 }

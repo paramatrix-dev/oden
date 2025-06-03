@@ -12,7 +12,7 @@ impl Expression {
                 None => Err(Error::UnknownVariable(key.to_owned(), span)),
             },
             ExprKind::Function { name, args } => match namespace.get(name) {
-                Some(Value::Type(t)) => t.construct()(&eval_args(args, namespace)?, span),
+                Some(Value::Type(t)) => t.construct(&eval_args(args, namespace)?, span),
                 _ => Err(Error::UnknownFunction(name.to_owned(), span)),
             },
             ExprKind::Method {

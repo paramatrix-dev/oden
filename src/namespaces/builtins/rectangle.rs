@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anvil::Rectangle;
 
 use crate::{
@@ -10,8 +8,12 @@ use crate::{
 };
 
 impl Type for Rectangle {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
+        check_args(args, vec!["Length", "Length"], span)?;
+        match args {
+            [Value::Length(x), Value::Length(y)] => Ok(Value::Sketch(Rectangle::from_dim(*x, *y))),
+            _ => unreachable!(),
+        }
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -26,13 +28,5 @@ impl InnerValue for Rectangle {
     }
     fn type_str(&self) -> String {
         "Type".into()
-    }
-}
-
-fn construct(args: &[Value], span: Span) -> Result<Value, Error> {
-    check_args(args, vec!["Length", "Length"], span)?;
-    match args {
-        [Value::Length(x), Value::Length(y)] => Ok(Value::Sketch(Rectangle::from_dim(*x, *y))),
-        _ => unreachable!(),
     }
 }

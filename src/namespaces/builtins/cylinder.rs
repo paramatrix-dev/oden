@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anvil::Cylinder;
 
 use crate::{
@@ -10,8 +8,14 @@ use crate::{
 };
 
 impl Type for Cylinder {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
+        check_args(args, vec!["Length", "Length"], span)?;
+        match args {
+            [Value::Length(radius), Value::Length(height)] => {
+                Ok(Value::Part(Cylinder::from_radius(*radius, *height)))
+            }
+            _ => unreachable!(),
+        }
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -26,15 +30,5 @@ impl InnerValue for Cylinder {
     }
     fn type_str(&self) -> String {
         "Type".into()
-    }
-}
-
-fn construct(args: &[Value], span: Span) -> Result<Value, Error> {
-    check_args(args, vec!["Length", "Length"], span)?;
-    match args {
-        [Value::Length(radius), Value::Length(height)] => {
-            Ok(Value::Part(Cylinder::from_radius(*radius, *height)))
-        }
-        _ => unreachable!(),
     }
 }

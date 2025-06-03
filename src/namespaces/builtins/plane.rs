@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anvil::Plane;
 
 use crate::{
@@ -13,8 +11,8 @@ use crate::{
 pub struct PlaneConstructor;
 
 impl Type for PlaneConstructor {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, _: &[Value], _: Span) -> Result<Value, Error> {
+        unimplemented!()
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -35,10 +33,6 @@ impl InnerValue for PlaneConstructor {
     fn type_str(&self) -> String {
         "Type".into()
     }
-}
-
-fn construct(_: &[Value], _: Span) -> Result<Value, Error> {
-    unimplemented!()
 }
 
 #[cfg(test)]

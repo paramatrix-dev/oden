@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anvil::Cuboid;
 
 use crate::{
@@ -12,8 +10,12 @@ use crate::{
 #[derive(Debug, PartialEq, Clone)]
 pub struct Cube;
 impl Type for Cube {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
+        check_args(args, vec!["Length"], span)?;
+        match args {
+            [Value::Length(size)] => Ok(Value::Part(Cuboid::from_dim(*size, *size, *size))),
+            _ => unreachable!(),
+        }
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -28,13 +30,5 @@ impl InnerValue for Cube {
     }
     fn type_str(&self) -> String {
         "Type".into()
-    }
-}
-
-fn construct(args: &[Value], span: Span) -> Result<Value, Error> {
-    check_args(args, vec!["Length"], span)?;
-    match args {
-        [Value::Length(size)] => Ok(Value::Part(Cuboid::from_dim(*size, *size, *size))),
-        _ => unreachable!(),
     }
 }

@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anvil::Circle;
 
 use crate::{
@@ -10,8 +8,12 @@ use crate::{
 };
 
 impl Type for Circle {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
+        check_args(args, vec!["Length"], span)?;
+        match args {
+            [Value::Length(radius)] => Ok(Value::Sketch(Circle::from_radius(*radius))),
+            _ => unreachable!(),
+        }
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -26,13 +28,5 @@ impl InnerValue for Circle {
     }
     fn type_str(&self) -> String {
         "Type".into()
-    }
-}
-
-fn construct(args: &[Value], span: Span) -> Result<Value, Error> {
-    check_args(args, vec!["Length"], span)?;
-    match args {
-        [Value::Length(radius)] => Ok(Value::Sketch(Circle::from_radius(*radius))),
-        _ => unreachable!(),
     }
 }

@@ -1,12 +1,12 @@
 use dyn_clone::DynClone;
 
 use crate::{errors::Error, syntax::Span, values::Value};
-use std::{fmt::Debug, sync::Arc};
+use std::fmt::Debug;
 
 use super::inner_value::InnerValue;
 
 pub trait Type: InnerValue + Debug + DynClone {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync>;
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error>;
     fn for_namespace(&self) -> (String, Value);
     fn name(&self) -> String;
 }

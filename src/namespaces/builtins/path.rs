@@ -1,20 +1,22 @@
-use std::sync::Arc;
-
-use anvil::{point, Path};
+use anvil::{Path, point};
 
 use crate::{
+    Value,
     errors::Error,
     syntax::Span,
-    values::{check_args, InnerValue, Type},
-    Value,
+    values::{InnerValue, Type, check_args},
 };
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PathConstructor;
 
 impl Type for PathConstructor {
-    fn construct(&self) -> Arc<dyn Fn(&[Value], Span) -> Result<Value, Error> + Send + Sync> {
-        Arc::new(construct)
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
+        check_args(args, vec!["Length", "Length"], span)?;
+        match args {
+            [Value::Length(x), Value::Length(y)] => Ok(Value::Path(Path::at(point!(*x, *y)))),
+            _ => unreachable!(),
+        }
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
@@ -32,21 +34,13 @@ impl InnerValue for PathConstructor {
     }
 }
 
-fn construct(args: &[Value], span: Span) -> Result<Value, Error> {
-    check_args(args, vec!["Length", "Length"], span)?;
-    match args {
-        [Value::Length(x), Value::Length(y)] => Ok(Value::Path(Path::at(point!(*x, *y)))),
-        _ => unreachable!(),
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use anvil::IntoLength;
 
     use crate::{
         namespaces::PartNamespace,
-        syntax::{tokenize, Expression},
+        syntax::{Expression, tokenize},
     };
 
     use super::*;
