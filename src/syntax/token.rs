@@ -17,7 +17,7 @@ impl Token {
     ///
     /// # Example
     /// ```rust
-    /// use oden::syntax::{Token, TokenKind, Span};
+    /// use oden::{Token, TokenKind, Span};
     ///
     /// let token = Token(TokenKind::Dot, Span(15, 16, "/file.oden".into()));
     /// assert_eq!(token.kind(), &TokenKind::Dot)
@@ -30,7 +30,7 @@ impl Token {
     ///
     /// # Example
     /// ```rust
-    /// use oden::syntax::{Token, TokenKind, Span};
+    /// use oden::{Token, TokenKind, Span};
     ///
     /// let token = Token(TokenKind::Dot, Span(15, 16, "/file.oden".into()));
     /// assert_eq!(token.span(), &Span(15, 16, "/file.oden".into()))

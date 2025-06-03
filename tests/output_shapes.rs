@@ -1,5 +1,5 @@
-use anvil::{point, Axis, Cuboid, Cylinder, IntoAngle, IntoLength, Path, Plane, Rectangle, Sphere};
-use oden::compile::compile_input;
+use anvil::{Axis, Cuboid, Cylinder, IntoAngle, IntoLength, Path, Plane, Rectangle, Sphere, point};
+use oden::compile_input;
 
 #[test]
 fn test_cube() {

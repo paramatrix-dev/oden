@@ -1,4 +1,4 @@
-use oden::{compile::compile_input, errors::Error, syntax::Span};
+use oden::{Error, Span, compile_input};
 
 #[test]
 fn test_call_from_str_second_argument_missing() {

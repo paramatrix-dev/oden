@@ -9,7 +9,7 @@ use super::Token;
 ///
 /// # Example:
 /// ```rust
-/// use oden::syntax::Span;
+/// use oden::Span;
 ///
 /// let start = 5;  // inclusive
 /// let end = 8;    // exclusive
@@ -23,7 +23,7 @@ impl Span {
     ///
     /// # Example
     /// ```rust
-    /// use oden::syntax::Span;
+    /// use oden::Span;
     ///
     /// let span = Span(1, 5, "/path/to/file".into());
     /// assert_eq!(span.start(), 1)
@@ -36,7 +36,7 @@ impl Span {
     ///
     /// # Example
     /// ```rust
-    /// use oden::syntax::Span;
+    /// use oden::Span;
     ///
     /// let span = Span(1, 5, "/path/to/file".into());
     /// assert_eq!(span.end(), 5)
@@ -50,7 +50,7 @@ impl Span {
     /// # Example
     /// ```rust
     /// use std::path::PathBuf;
-    /// use oden::syntax::Span;
+    /// use oden::Span;
     ///
     /// let span = Span(1, 5, "/path/to/file".into());
     /// assert_eq!(span.path(), PathBuf::from("/path/to/file"))
@@ -66,7 +66,7 @@ impl Span {
     ///
     /// # Example
     /// ```rust
-    /// use oden::syntax::Span;
+    /// use oden::Span;
     ///
     /// let span1 = Span(1, 5, "/path/to/file".into());
     /// let span2 = Span(4, 8, "/path/to/file".into());
