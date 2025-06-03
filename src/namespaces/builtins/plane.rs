@@ -1,11 +1,6 @@
 use anvil::Plane;
 
-use crate::{
-    Value,
-    errors::Error,
-    syntax::Span,
-    values::{TypeInstance, Type},
-};
+use crate::{Error, Span, Type, TypeInstance, Value};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PlaneConstructor;

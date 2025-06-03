@@ -1,11 +1,6 @@
 use anvil::{Path, point};
 
-use crate::{
-    Value,
-    errors::Error,
-    syntax::Span,
-    values::{Type, TypeInstance, check_args},
-};
+use crate::{Error, Span, Type, TypeInstance, Value, check_args};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PathConstructor;

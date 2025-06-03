@@ -1,9 +1,7 @@
 use anvil::{Angle, Axis, Length, Part, Path, Plane, Sketch};
 use regex::Regex;
 
-use crate::{errors::Error, syntax::Span};
-
-use super::{inner_value::TypeInstance, Type};
+use crate::{Error, Span, Type, TypeInstance};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Value {

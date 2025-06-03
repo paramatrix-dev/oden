@@ -1,8 +1,6 @@
 use anvil::{Path, Point};
 
-use crate::{errors::Error, syntax::Span};
-
-use super::{check_args, TypeInstance, Value};
+use crate::{Error, Span, TypeInstance, Value, check_args};
 
 impl TypeInstance for Path {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {

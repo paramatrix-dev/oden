@@ -1,11 +1,6 @@
 use anvil::Cuboid;
 
-use crate::{
-    Value,
-    errors::Error,
-    syntax::Span,
-    values::{TypeInstance, Type, check_args},
-};
+use crate::{Error, Span, Type, TypeInstance, Value, check_args};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Cube;

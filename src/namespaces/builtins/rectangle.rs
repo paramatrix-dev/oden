@@ -1,11 +1,6 @@
 use anvil::Rectangle;
 
-use crate::{
-    Value,
-    errors::Error,
-    syntax::Span,
-    values::{TypeInstance, Type, check_args},
-};
+use crate::{Error, Span, Type, TypeInstance, Value, check_args};
 
 impl Type for Rectangle {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {

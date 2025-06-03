@@ -1,11 +1,6 @@
-use anvil::{point, Part};
+use anvil::{Part, point};
 
-use crate::{errors::Error, syntax::Span};
-
-use super::{
-    inner_value::{check_args, TypeInstance},
-    Value,
-};
+use crate::{Error, Span, TypeInstance, Value, check_args};
 
 impl TypeInstance for Part {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
@@ -21,7 +16,7 @@ impl TypeInstance for Part {
                 check_args(args, vec!["Axis", "Number"], span)?;
                 match args {
                     [Value::Axis(axis), Value::Number(n)] => {
-                        Ok(Value::Part(self.circular_pattern(axis.clone(), *n as u8)))
+                        Ok(Value::Part(self.circular_pattern(*axis, *n as u8)))
                     }
                     _ => unreachable!(),
                 }
@@ -46,7 +41,7 @@ impl TypeInstance for Part {
                 check_args(args, vec!["Axis", "Angle"], span)?;
                 match args {
                     [Value::Axis(axis), Value::Angle(angle)] => {
-                        Ok(Value::Part(self.rotate_around(axis.clone(), *angle)))
+                        Ok(Value::Part(self.rotate_around(*axis, *angle)))
                     }
                     _ => unreachable!(),
                 }

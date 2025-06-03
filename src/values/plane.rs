@@ -1,8 +1,6 @@
 use anvil::Plane;
 
-use crate::{errors::Error, syntax::Span};
-
-use super::{TypeInstance, Value};
+use crate::{Error, Span, TypeInstance, Value};
 
 impl TypeInstance for Plane {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {

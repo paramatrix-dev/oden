@@ -10,7 +10,10 @@ pub use compile::compile_input;
 pub use errors::Error;
 pub use namespaces::PartNamespace;
 pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, tokenize};
-pub use values::{Type, TypeInstance, Value, check_args};
+pub use values::{
+    Value,
+    traits::{Type, TypeInstance, check_args},
+};
 
 /// Compile an oden file and write the resulting shape into an STEP file.
 pub fn compile(source: PathBuf, target: PathBuf) -> Result<(), Error> {

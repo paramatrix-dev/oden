@@ -1,11 +1,6 @@
 use anvil::Axis;
 
-use crate::{
-    Value,
-    errors::Error,
-    syntax::Span,
-    values::{Type, TypeInstance},
-};
+use crate::{Error, Span, Type, TypeInstance, Value};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AxisConstructor;

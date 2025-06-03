@@ -1,9 +1,4 @@
-use crate::{errors::Error, syntax::Span};
-
-use super::{
-    Value,
-    inner_value::{TypeInstance, check_args},
-};
+use crate::{Error, Span, TypeInstance, Value, check_args};
 
 impl TypeInstance for f64 {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {

@@ -1,9 +1,7 @@
 use dyn_clone::DynClone;
 
-use crate::{errors::Error, syntax::Span, values::Value};
+use crate::{TypeInstance, errors::Error, syntax::Span, values::Value};
 use std::fmt::Debug;
-
-use super::inner_value::TypeInstance;
 
 pub trait Type: TypeInstance + Debug + DynClone {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error>;

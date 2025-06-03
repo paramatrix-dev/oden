@@ -1,6 +1,4 @@
-use crate::{errors::Error, syntax::Span};
-
-use super::Value;
+use crate::{Error, Span, Value};
 
 pub trait TypeInstance {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error>;

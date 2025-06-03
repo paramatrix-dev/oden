@@ -1,8 +1,6 @@
-use anvil::{point, Sketch};
+use anvil::{Sketch, point};
 
-use crate::{errors::Error, syntax::Span};
-
-use super::{check_args, inner_value::TypeInstance, Value};
+use crate::{Error, Span, TypeInstance, Value, check_args};
 
 impl TypeInstance for Sketch {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {

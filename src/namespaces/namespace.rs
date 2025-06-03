@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anvil::{Circle, Cuboid, Cylinder, Part, Rectangle, Sphere};
 
-use crate::values::{Type, Value};
+use crate::{Type, Value};
 
 use super::builtins::{AxisConstructor, Cube, PathConstructor, PlaneConstructor};
 

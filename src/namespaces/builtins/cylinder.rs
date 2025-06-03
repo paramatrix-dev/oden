@@ -1,11 +1,6 @@
 use anvil::Cylinder;
 
-use crate::{
-    Value,
-    errors::Error,
-    syntax::Span,
-    values::{TypeInstance, Type, check_args},
-};
+use crate::{Error, Span, Type, TypeInstance, Value, check_args};
 
 impl Type for Cylinder {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
