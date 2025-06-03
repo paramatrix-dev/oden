@@ -1,6 +1,6 @@
 use anvil::{Path, point};
 
-use crate::{Error, Span, Type, TypeInstance, Value, check_args};
+use crate::{Error, Span, Type, Instance, Value, check_args};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PathConstructor;
@@ -20,7 +20,7 @@ impl Type for PathConstructor {
         "Path".into()
     }
 }
-impl TypeInstance for PathConstructor {
+impl Instance for PathConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::UnknownMethod(method.into(), span))
     }

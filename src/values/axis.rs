@@ -1,8 +1,8 @@
 use anvil::Axis;
 
-use crate::{Error, Span, TypeInstance, Value};
+use crate::{Error, Span, Instance, Value};
 
-impl TypeInstance for Axis<3> {
+impl Instance for Axis<3> {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::UnknownMethod(method.into(), span))
     }

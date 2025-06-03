@@ -1,6 +1,6 @@
 use anvil::Cuboid;
 
-use crate::{Error, Span, Type, TypeInstance, Value, check_args};
+use crate::{Error, Span, Type, Instance, Value, check_args};
 
 impl Type for Cuboid {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
@@ -19,7 +19,7 @@ impl Type for Cuboid {
         "Cuboid".into()
     }
 }
-impl TypeInstance for Cuboid {
+impl Instance for Cuboid {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

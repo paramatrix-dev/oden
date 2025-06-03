@@ -1,8 +1,8 @@
 use anvil::Length;
 
-use crate::{Error, Span, TypeInstance, Value, check_args};
+use crate::{Error, Span, Instance, Value, check_args};
 
-impl TypeInstance for Length {
+impl Instance for Length {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "add" => {

@@ -1,7 +1,7 @@
 use anvil::{Angle, Axis, Length, Part, Path, Plane, Sketch};
 use regex::Regex;
 
-use crate::{Error, Span, Type, TypeInstance};
+use crate::{Error, Span, Type, Instance};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Value {
@@ -41,7 +41,7 @@ impl Value {
         self.inner().type_str()
     }
 
-    fn inner(&self) -> &dyn TypeInstance {
+    fn inner(&self) -> &dyn Instance {
         match self {
             Value::Angle(inner) => inner,
             Value::Axis(inner) => inner,

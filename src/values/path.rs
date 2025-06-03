@@ -1,8 +1,8 @@
 use anvil::{Path, Point};
 
-use crate::{Error, Span, TypeInstance, Value, check_args};
+use crate::{Error, Span, Instance, Value, check_args};
 
-impl TypeInstance for Path {
+impl Instance for Path {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "line_to" => {

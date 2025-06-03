@@ -12,7 +12,7 @@ pub use namespaces::PartNamespace;
 pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, tokenize};
 pub use values::{
     Value,
-    traits::{Type, TypeInstance, check_args},
+    traits::{Type, Instance, check_args},
 };
 
 /// Compile an oden file and write the resulting shape into an STEP file.

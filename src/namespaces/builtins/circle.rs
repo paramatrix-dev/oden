@@ -1,6 +1,6 @@
 use anvil::Circle;
 
-use crate::{Error, Span, Type, TypeInstance, Value, check_args};
+use crate::{Error, Span, Type, Instance, Value, check_args};
 
 impl Type for Circle {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
@@ -17,7 +17,7 @@ impl Type for Circle {
         "Circle".into()
     }
 }
-impl TypeInstance for Circle {
+impl Instance for Circle {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

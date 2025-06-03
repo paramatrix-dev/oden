@@ -1,6 +1,6 @@
 use anvil::Plane;
 
-use crate::{Error, Span, Type, TypeInstance, Value};
+use crate::{Error, Span, Type, Instance, Value};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PlaneConstructor;
@@ -16,7 +16,7 @@ impl Type for PlaneConstructor {
         "Plane".into()
     }
 }
-impl TypeInstance for PlaneConstructor {
+impl Instance for PlaneConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "XY" => Ok(Value::Plane(Plane::xy())),

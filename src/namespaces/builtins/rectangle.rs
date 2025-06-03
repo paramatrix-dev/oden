@@ -1,6 +1,6 @@
 use anvil::Rectangle;
 
-use crate::{Error, Span, Type, TypeInstance, Value, check_args};
+use crate::{Error, Span, Type, Instance, Value, check_args};
 
 impl Type for Rectangle {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
@@ -17,7 +17,7 @@ impl Type for Rectangle {
         "Rectangle".into()
     }
 }
-impl TypeInstance for Rectangle {
+impl Instance for Rectangle {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

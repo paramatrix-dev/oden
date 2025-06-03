@@ -1,6 +1,6 @@
 use anvil::Sphere;
 
-use crate::{Error, Span, Type, TypeInstance, Value, check_args};
+use crate::{Error, Instance, Span, Type, Value, check_args};
 
 impl Type for Sphere {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
@@ -17,7 +17,7 @@ impl Type for Sphere {
         "Sphere".into()
     }
 }
-impl TypeInstance for Sphere {
+impl Instance for Sphere {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

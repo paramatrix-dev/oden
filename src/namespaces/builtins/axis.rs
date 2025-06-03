@@ -1,6 +1,6 @@
 use anvil::Axis;
 
-use crate::{Error, Span, Type, TypeInstance, Value};
+use crate::{Error, Instance, Span, Type, Value};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AxisConstructor;
@@ -15,7 +15,7 @@ impl Type for AxisConstructor {
         "Axis".into()
     }
 }
-impl TypeInstance for AxisConstructor {
+impl Instance for AxisConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "X" => Ok(Value::Axis(Axis::<3>::x())),

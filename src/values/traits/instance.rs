@@ -1,6 +1,6 @@
 use crate::{Error, Span, Value};
 
-pub trait TypeInstance {
+pub trait Instance {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error>;
     fn type_str(&self) -> String;
 }

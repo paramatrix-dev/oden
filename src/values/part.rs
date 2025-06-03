@@ -1,8 +1,8 @@
 use anvil::{Part, point};
 
-use crate::{Error, Span, TypeInstance, Value, check_args};
+use crate::{Error, Span, Instance, Value, check_args};
 
-impl TypeInstance for Part {
+impl Instance for Part {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "add" => {
