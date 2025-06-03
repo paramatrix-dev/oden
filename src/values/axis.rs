@@ -48,19 +48,19 @@ mod tests {
     }
 
     #[test]
-    fn x() {
+    fn type_method_x() {
         let actual = eval_str("Axis.X()");
         assert_eq!(actual, Ok(Value::Axis(Axis::<3>::x())))
     }
 
     #[test]
-    fn y() {
+    fn type_method_y() {
         let actual = eval_str("Axis.Y()");
         assert_eq!(actual, Ok(Value::Axis(Axis::<3>::y())))
     }
 
     #[test]
-    fn z() {
+    fn type_method_z() {
         let actual = eval_str("Axis.Z()");
         assert_eq!(actual, Ok(Value::Axis(Axis::<3>::z())))
     }

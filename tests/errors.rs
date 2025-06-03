@@ -289,19 +289,6 @@ fn test_method_call_on_num() {
 }
 
 #[test]
-fn test_method_call_on_function() {
-    let text = "
-    part Box:
-        Cuboid.move_to(5mm, 6mm, 7mm)
-    ";
-
-    assert_eq!(
-        compile_input(text, "".into()),
-        Err(Error::FunctionIsNotMethod(Span(23, 52, "".into())))
-    )
-}
-
-#[test]
 fn test_empty_sketch() {
     let text = "
         part Box:

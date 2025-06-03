@@ -1,27 +1,97 @@
-use anvil::{Path, Point};
+use anvil::{Path, Point, point};
 
-use crate::{Error, Span, Instance, Value, check_args};
+use crate::{Error, Instance, Span, Type, Value, check_args};
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PathType;
+impl Type for PathType {
+    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
+        check_args(args, vec!["Length", "Length"], span)?;
+        match args {
+            [Value::Length(x), Value::Length(y)] => Ok(Value::Path(Path::at(point!(*x, *y)))),
+            _ => unreachable!(),
+        }
+    }
+    fn for_namespace(&self) -> (String, crate::Value) {
+        (self.name(), Value::Type(Box::new(Self)))
+    }
+    fn name(&self) -> String {
+        "Path".into()
+    }
+}
+impl Instance for PathType {
+    fn type_str(&self) -> String {
+        "Type".into()
+    }
+}
 
 impl Instance for Path {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
+            "close" => {
+                check_args(args, vec![], span)?;
+                Ok(Value::Sketch(self.clone().close()))
+            }
             "line_to" => {
                 check_args(args, vec!["Length", "Length"], span)?;
                 match args {
                     [Value::Length(x), Value::Length(y)] => {
-                        Ok(Value::Path(self.line_to(Point::<2>::new([*x, *y]))))
+                        Ok(Value::Path(self.line_to(point!(*x, *y))))
                     }
                     _ => unreachable!(),
                 }
-            }
-            "close" => {
-                check_args(args, vec![], span)?;
-                Ok(Value::Sketch(self.clone().close()))
             }
             _ => Err(Error::UnknownMethod(method.into(), span)),
         }
     }
     fn type_str(&self) -> String {
         "Path".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anvil::IntoLength;
+
+    use crate::eval_str;
+
+    use super::*;
+
+    #[test]
+    fn call() {
+        let actual = eval_str("Path(1m, 2m)");
+        assert_eq!(actual, Ok(Value::Path(Path::at(point!(1.m(), 2.m())))))
+    }
+
+    #[test]
+    fn instance_method_line_to() {
+        let actual = eval_str("Path(1m, 2m).line_to(3m, 4m)");
+        assert_eq!(
+            actual,
+            Ok(Value::Path(
+                Path::at(point!(1.m(), 2.m())).line_to(point!(3.m(), 4.m()))
+            ))
+        )
+    }
+
+    #[test]
+    fn instance_method_close() {
+        let actual = eval_str("Path(1m, 2m).close()");
+        assert_eq!(
+            actual,
+            Ok(Value::Sketch(Path::at(point!(1.m(), 2.m())).close()))
+        )
+    }
+
+    #[test]
+    fn unknown_method() {
+        let actual = eval_str("Path.UNKNOWN()");
+        assert_eq!(
+            actual,
+            Err(Error::UnknownMethod(
+                "UNKNOWN".into(),
+                Span(0, 14, "".into())
+            ))
+        )
     }
 }

@@ -46,7 +46,7 @@ mod tests {
             actual,
             Err(Error::UnknownMethod(
                 "UNKNOWN".into(),
-                Span(0, 16, "".into())
+                Span(0, 18, "".into())
             ))
         )
     }

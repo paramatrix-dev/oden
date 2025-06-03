@@ -13,6 +13,7 @@ pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, eval_s
 pub use values::{
     Value,
     axis::AxisType,
+    path::PathType,
     traits::{Instance, Type, check_args},
 };
 
