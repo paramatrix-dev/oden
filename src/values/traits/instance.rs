@@ -1,8 +1,10 @@
 use crate::{Error, Span, Value};
 
 pub trait Instance {
-    fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error>;
     fn type_str(&self) -> String;
+    fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
+        Err(Error::UnknownMethod(method.into(), span))
+    }
 }
 
 pub fn check_args(args: &[Value], should: Vec<&str>, span: Span) -> Result<(), Error> {

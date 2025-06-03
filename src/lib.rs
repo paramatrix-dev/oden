@@ -12,6 +12,7 @@ pub use namespaces::PartNamespace;
 pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, eval_str, tokenize};
 pub use values::{
     Value,
+    axis::AxisType,
     traits::{Instance, Type, check_args},
 };
 

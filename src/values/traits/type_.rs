@@ -4,8 +4,10 @@ use crate::{Instance, errors::Error, syntax::Span, values::Value};
 use std::fmt::Debug;
 
 pub trait Type: Instance + Debug + DynClone {
-    fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error>;
     fn name(&self) -> String;
+    fn construct(&self, _: &[Value], span: Span) -> Result<Value, Error> {
+        Err(Error::NotCallable(self.name(), span))
+    }
     fn for_namespace(&self) -> (String, Value);
 }
 
