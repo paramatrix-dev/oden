@@ -2,13 +2,13 @@ use std::path::PathBuf;
 
 mod compile;
 mod errors;
-mod namespaces;
+mod namespace;
 mod syntax;
 mod values;
 
 pub use compile::compile_input;
 pub use errors::Error;
-pub use namespaces::PartNamespace;
+pub use namespace::PartNamespace;
 pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, eval_str, tokenize};
 pub use values::{
     Value,

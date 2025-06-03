@@ -1,7 +1,7 @@
 use super::_struct::{Statement, StmtKind};
 use crate::{
+    PartNamespace,
     errors::Error,
-    namespaces::PartNamespace,
     syntax::expression::{ExprKind, Expression},
 };
 
@@ -45,7 +45,7 @@ fn resolve_receiver(receiver: Expression) -> Result<String, Error> {
 mod tests {
     use super::*;
     use crate::{
-        syntax::{expression::ExprKind, Span},
+        syntax::{Span, expression::ExprKind},
         values::Value,
     };
     use anvil::{Cuboid, IntoLength, Length};

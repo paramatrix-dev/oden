@@ -2,9 +2,7 @@ use std::collections::HashMap;
 
 use anvil::{Circle, Cube, Cuboid, Cylinder, Part, Rectangle, Sphere};
 
-use crate::{AxisType, PathType, Type, Value};
-
-use super::builtins::PlaneConstructor;
+use crate::{AxisType, PathType, Type, Value, values::plane::PlaneType};
 
 /// A hashmap containing all accessible variables and functions.
 ///
@@ -30,7 +28,7 @@ impl Default for PartNamespace {
                 Cuboid.for_namespace(),
                 Cylinder.for_namespace(),
                 PathType.for_namespace(),
-                PlaneConstructor.for_namespace(),
+                PlaneType.for_namespace(),
                 Rectangle.for_namespace(),
                 Sphere.for_namespace(),
             ]

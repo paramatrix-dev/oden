@@ -1,4 +1,4 @@
-use anvil::{Path, Point, point};
+use anvil::{Path, point};
 
 use crate::{Error, Instance, Span, Type, Value, check_args};
 

@@ -1,5 +1,5 @@
 use super::{ExprKind, Expression};
-use crate::{errors::Error, namespaces::PartNamespace, values::Value};
+use crate::{PartNamespace, errors::Error, values::Value};
 
 impl Expression {
     /// Evaluate an expression to a Value.
