@@ -2,9 +2,9 @@ use anvil::{Path, Point};
 
 use crate::{errors::Error, syntax::Span};
 
-use super::{check_args, InnerValue, Value};
+use super::{check_args, TypeInstance, Value};
 
-impl InnerValue for Path {
+impl TypeInstance for Path {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "line_to" => {

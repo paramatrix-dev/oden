@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type, check_args},
+    values::{TypeInstance, Type, check_args},
 };
 
 impl Type for Cylinder {
@@ -24,7 +24,7 @@ impl Type for Cylinder {
         "Cylinder".into()
     }
 }
-impl InnerValue for Cylinder {
+impl TypeInstance for Cylinder {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

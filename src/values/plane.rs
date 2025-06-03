@@ -2,9 +2,9 @@ use anvil::Plane;
 
 use crate::{errors::Error, syntax::Span};
 
-use super::{InnerValue, Value};
+use super::{TypeInstance, Value};
 
-impl InnerValue for Plane {
+impl TypeInstance for Plane {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::UnknownMethod(method.into(), span))
     }

@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type},
+    values::{Type, TypeInstance},
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -20,7 +20,7 @@ impl Type for AxisConstructor {
         "Axis".into()
     }
 }
-impl InnerValue for AxisConstructor {
+impl TypeInstance for AxisConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "X" => Ok(Value::Axis(Axis::<3>::x())),
@@ -32,10 +32,6 @@ impl InnerValue for AxisConstructor {
     fn type_str(&self) -> String {
         "Type".into()
     }
-}
-
-fn construct(_: &[Value], _: Span) -> Result<Value, Error> {
-    unimplemented!()
 }
 
 #[cfg(test)]

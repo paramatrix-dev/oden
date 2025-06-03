@@ -2,9 +2,9 @@ use anvil::{point, Sketch};
 
 use crate::{errors::Error, syntax::Span};
 
-use super::{check_args, inner_value::InnerValue, Value};
+use super::{check_args, inner_value::TypeInstance, Value};
 
-impl InnerValue for Sketch {
+impl TypeInstance for Sketch {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "add" => {

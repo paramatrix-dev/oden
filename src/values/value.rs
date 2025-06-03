@@ -3,7 +3,7 @@ use regex::Regex;
 
 use crate::{errors::Error, syntax::Span};
 
-use super::{inner_value::InnerValue, Type};
+use super::{inner_value::TypeInstance, Type};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Value {
@@ -43,7 +43,7 @@ impl Value {
         self.inner().type_str()
     }
 
-    fn inner(&self) -> &dyn InnerValue {
+    fn inner(&self) -> &dyn TypeInstance {
         match self {
             Value::Angle(inner) => inner,
             Value::Axis(inner) => inner,

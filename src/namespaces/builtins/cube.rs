@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type, check_args},
+    values::{TypeInstance, Type, check_args},
 };
 
 #[derive(Debug, PartialEq, Clone)]
@@ -24,7 +24,7 @@ impl Type for Cube {
         "Cube".into()
     }
 }
-impl InnerValue for Cube {
+impl TypeInstance for Cube {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

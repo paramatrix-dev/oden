@@ -2,9 +2,9 @@ use anvil::Axis;
 
 use crate::{errors::Error, syntax::Span};
 
-use super::{InnerValue, Value};
+use super::{TypeInstance, Value};
 
-impl InnerValue for Axis<3> {
+impl TypeInstance for Axis<3> {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::UnknownMethod(method.into(), span))
     }

@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type},
+    values::{TypeInstance, Type},
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -21,7 +21,7 @@ impl Type for PlaneConstructor {
         "Plane".into()
     }
 }
-impl InnerValue for PlaneConstructor {
+impl TypeInstance for PlaneConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "XY" => Ok(Value::Plane(Plane::xy())),

@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type, check_args},
+    values::{TypeInstance, Type, check_args},
 };
 
 impl Type for Sphere {
@@ -22,7 +22,7 @@ impl Type for Sphere {
         "Sphere".into()
     }
 }
-impl InnerValue for Sphere {
+impl TypeInstance for Sphere {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type, check_args},
+    values::{TypeInstance, Type, check_args},
 };
 
 impl Type for Cuboid {
@@ -24,7 +24,7 @@ impl Type for Cuboid {
         "Cuboid".into()
     }
 }
-impl InnerValue for Cuboid {
+impl TypeInstance for Cuboid {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }

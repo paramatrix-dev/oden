@@ -2,7 +2,7 @@ use crate::{errors::Error, syntax::Span};
 
 use super::Value;
 
-pub trait InnerValue {
+pub trait TypeInstance {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error>;
     fn type_str(&self) -> String;
 }

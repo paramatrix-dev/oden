@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type, check_args},
+    values::{Type, TypeInstance, check_args},
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -25,7 +25,7 @@ impl Type for PathConstructor {
         "Path".into()
     }
 }
-impl InnerValue for PathConstructor {
+impl TypeInstance for PathConstructor {
     fn method_call(&self, method: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::UnknownMethod(method.into(), span))
     }

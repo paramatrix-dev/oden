@@ -3,11 +3,11 @@ use anvil::{point, Part};
 use crate::{errors::Error, syntax::Span};
 
 use super::{
-    inner_value::{check_args, InnerValue},
+    inner_value::{check_args, TypeInstance},
     Value,
 };
 
-impl InnerValue for Part {
+impl TypeInstance for Part {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "add" => {

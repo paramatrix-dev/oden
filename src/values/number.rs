@@ -2,10 +2,10 @@ use crate::{errors::Error, syntax::Span};
 
 use super::{
     Value,
-    inner_value::{InnerValue, check_args},
+    inner_value::{TypeInstance, check_args},
 };
 
-impl InnerValue for f64 {
+impl TypeInstance for f64 {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
             "add" => {

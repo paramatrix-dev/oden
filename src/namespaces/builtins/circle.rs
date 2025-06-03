@@ -4,7 +4,7 @@ use crate::{
     Value,
     errors::Error,
     syntax::Span,
-    values::{InnerValue, Type, check_args},
+    values::{TypeInstance, Type, check_args},
 };
 
 impl Type for Circle {
@@ -22,7 +22,7 @@ impl Type for Circle {
         "Circle".into()
     }
 }
-impl InnerValue for Circle {
+impl TypeInstance for Circle {
     fn method_call(&self, _: &str, _: &[Value], span: Span) -> Result<Value, Error> {
         Err(Error::FunctionIsNotMethod(span))
     }
