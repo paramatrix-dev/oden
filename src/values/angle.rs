@@ -1,42 +1,54 @@
 use anvil::Angle;
 
-use crate::{Error, Span, Instance, Value, check_args};
+use crate::{
+    Error, Instance, Span, Value,
+    values::traits::match_args::{match_angle_arg, match_num_arg},
+};
 
 impl Instance for Angle {
     fn method_call(&self, method: &str, args: &[Value], span: Span) -> Result<Value, Error> {
         match method {
-            "add" => {
-                check_args(args, vec!["Angle"], span)?;
-                match args {
-                    [Value::Angle(other)] => Ok(Value::Angle(*self + *other)),
-                    _ => unreachable!(),
-                }
-            }
-            "subtract" => {
-                check_args(args, vec!["Angle"], span)?;
-                match args {
-                    [Value::Angle(other)] => Ok(Value::Angle(*self - *other)),
-                    _ => unreachable!(),
-                }
-            }
-            "multiply" => {
-                check_args(args, vec!["Number"], span)?;
-                match args {
-                    [Value::Number(other)] => Ok(Value::Angle(*self * *other)),
-                    _ => unreachable!(),
-                }
-            }
-            "divide" => {
-                check_args(args, vec!["Number"], span)?;
-                match args {
-                    [Value::Number(other)] => Ok(Value::Angle(*self / *other)),
-                    _ => unreachable!(),
-                }
-            }
+            "add" => Ok(Value::Angle(*self + match_angle_arg(args, span)?)),
+            "subtract" => Ok(Value::Angle(*self - match_angle_arg(args, span)?)),
+            "multiply" => Ok(Value::Angle(*self * match_num_arg(args, span)?)),
+            "divide" => Ok(Value::Angle(*self / match_num_arg(args, span)?)),
             _ => Err(Error::UnknownMethod(method.to_owned(), span)),
         }
     }
     fn type_str(&self) -> String {
         "Angle".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anvil::IntoAngle;
+
+    use crate::eval_str;
+
+    use super::*;
+
+    #[test]
+    fn instance_method_add() {
+        let actual = eval_str("1rad + 2rad");
+        assert_eq!(actual, Ok(Value::Angle(3.rad())))
+    }
+
+    #[test]
+    fn instance_method_subtract() {
+        let actual = eval_str("3rad - 2rad");
+        assert_eq!(actual, Ok(Value::Angle(1.rad())))
+    }
+
+    #[test]
+    fn instance_method_multiply() {
+        let actual = eval_str("2rad * 3");
+        assert_eq!(actual, Ok(Value::Angle(6.rad())))
+    }
+
+    #[test]
+    fn instance_method_divide() {
+        let actual = eval_str("2rad / 2");
+        assert_eq!(actual, Ok(Value::Angle(1.rad())))
     }
 }

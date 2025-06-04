@@ -1,14 +1,12 @@
 use anvil::Sphere;
 
-use crate::{Error, Instance, Span, Type, Value, check_args};
+use crate::{Error, Instance, Span, Type, Value, values::traits::match_args::match_length_arg};
 
 impl Type for Sphere {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
-        check_args(args, vec!["Length"], span)?;
-        match args {
-            [Value::Length(radius)] => Ok(Value::Part(Sphere::from_radius(*radius))),
-            _ => unreachable!(),
-        }
+        Ok(Value::Part(Sphere::from_radius(match_length_arg(
+            args, span,
+        )?)))
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))

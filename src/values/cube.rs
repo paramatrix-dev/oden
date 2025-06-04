@@ -1,20 +1,16 @@
 use anvil::Cube;
 
-use crate::{Error, Instance, Span, Type, Value, check_args};
+use crate::{Error, Instance, Span, Type, Value, values::traits::match_args::match_length_arg};
 
 impl Type for Cube {
+    fn name(&self) -> String {
+        "Cube".into()
+    }
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
-        check_args(args, vec!["Length"], span)?;
-        match args {
-            [Value::Length(size)] => Ok(Value::Part(Cube::from_size(*size))),
-            _ => unreachable!(),
-        }
+        Ok(Value::Part(Cube::from_size(match_length_arg(args, span)?)))
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
-    }
-    fn name(&self) -> String {
-        "Cube".into()
     }
 }
 impl Instance for Cube {

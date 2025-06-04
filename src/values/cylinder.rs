@@ -1,22 +1,19 @@
 use anvil::Cylinder;
 
-use crate::{Error, Instance, Span, Type, Value, check_args};
+use crate::{
+    Error, Instance, Span, Type, Value, values::traits::match_args::match_two_length_args,
+};
 
 impl Type for Cylinder {
+    fn name(&self) -> String {
+        "Cylinder".into()
+    }
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
-        check_args(args, vec!["Length", "Length"], span)?;
-        match args {
-            [Value::Length(radius), Value::Length(height)] => {
-                Ok(Value::Part(Cylinder::from_radius(*radius, *height)))
-            }
-            _ => unreachable!(),
-        }
+        let (radius, height) = match_two_length_args(args, span)?;
+        Ok(Value::Part(Cylinder::from_radius(radius, height)))
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
-    }
-    fn name(&self) -> String {
-        "Cylinder".into()
     }
 }
 impl Instance for Cylinder {

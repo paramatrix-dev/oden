@@ -1,14 +1,13 @@
 use anvil::Rectangle;
 
-use crate::{Error, Instance, Span, Type, Value, check_args};
+use crate::{
+    Error, Instance, Span, Type, Value, values::traits::match_args::match_two_length_args,
+};
 
 impl Type for Rectangle {
     fn construct(&self, args: &[Value], span: Span) -> Result<Value, Error> {
-        check_args(args, vec!["Length", "Length"], span)?;
-        match args {
-            [Value::Length(x), Value::Length(y)] => Ok(Value::Sketch(Rectangle::from_dim(*x, *y))),
-            _ => unreachable!(),
-        }
+        let (x, y) = match_two_length_args(args, span)?;
+        Ok(Value::Sketch(Rectangle::from_dim(x, y)))
     }
     fn for_namespace(&self) -> (String, crate::Value) {
         (self.name(), Value::Type(Box::new(Self)))
