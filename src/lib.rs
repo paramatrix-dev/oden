@@ -4,18 +4,12 @@ mod compile;
 mod errors;
 mod namespace;
 mod syntax;
-mod values;
 
 pub use compile::compile_input;
 pub use errors::Error;
-pub use namespace::PartNamespace;
+pub use namespace::traits::{Callable, Instance, Type};
+pub use namespace::{Member, PartNamespace};
 pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, eval_str, tokenize};
-pub use values::{
-    Value,
-    axis::AxisType,
-    path::PathType,
-    traits::{Instance, Type, check_args},
-};
 
 /// Compile an oden file and write the resulting shape into an STEP file.
 pub fn compile(source: PathBuf, target: PathBuf) -> Result<(), Error> {

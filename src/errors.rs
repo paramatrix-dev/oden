@@ -28,6 +28,12 @@ pub enum Error {
     /// ```
     ArgumentType { should: String, span: Span },
 
+    Arguments {
+        should: Vec<String>,
+        is: Vec<String>,
+        span: Span,
+    },
+
     /// Occurs when a sketch without area is extruded.
     ///
     /// # Example

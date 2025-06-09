@@ -46,7 +46,7 @@ mod tests {
     use super::*;
     use crate::{
         syntax::{Span, expression::ExprKind},
-        values::Value,
+        values::Member,
     };
     use anvil::{Cuboid, IntoLength, Length};
 
@@ -70,7 +70,7 @@ mod tests {
         assert!(statement.execute(&mut namespace).is_ok());
         assert_eq!(
             namespace.get(&"height".into()),
-            Some(&Value::Length(Length::from_mm(5.)))
+            Some(&Member::Length(Length::from_mm(5.)))
         )
     }
 
@@ -89,7 +89,7 @@ mod tests {
         );
         let mut namespace = PartNamespace::new().insert_clone(
             "box".into(),
-            Value::Part(Cuboid::from_dim(5.mm(), 6.mm(), 7.mm())),
+            Member::Part(Cuboid::from_dim(5.mm(), 6.mm(), 7.mm())),
         );
 
         assert!(statement.execute(&mut namespace).is_ok());
