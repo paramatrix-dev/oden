@@ -45,8 +45,8 @@ fn resolve_receiver(receiver: Expression) -> Result<String, Error> {
 mod tests {
     use super::*;
     use crate::{
+        Member,
         syntax::{Span, expression::ExprKind},
-        values::Member,
     };
     use anvil::{Cuboid, IntoLength, Length};
 
@@ -70,7 +70,7 @@ mod tests {
         assert!(statement.execute(&mut namespace).is_ok());
         assert_eq!(
             namespace.get(&"height".into()),
-            Some(&Member::Length(Length::from_mm(5.)))
+            Some(&Member::Instance(Box::new(Length::from_mm(5.))))
         )
     }
 
@@ -89,7 +89,7 @@ mod tests {
         );
         let mut namespace = PartNamespace::new().insert_clone(
             "box".into(),
-            Member::Part(Cuboid::from_dim(5.mm(), 6.mm(), 7.mm())),
+            Member::Instance(Box::new(Cuboid::from_dim(5.mm(), 6.mm(), 7.mm()))),
         );
 
         assert!(statement.execute(&mut namespace).is_ok());

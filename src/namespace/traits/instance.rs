@@ -1,8 +1,10 @@
+use std::fmt::Debug;
+
 use downcast_rs::{Downcast, impl_downcast};
 use dyn_clone::{DynClone, clone_trait_object};
 
 use crate::{Error, Span, namespace::traits::Callable};
-pub trait Instance: DynClone + Downcast {
+pub trait Instance: Debug + DynClone + Downcast {
     fn methods(&self) -> Vec<Box<dyn Callable>> {
         vec![]
     }

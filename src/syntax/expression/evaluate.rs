@@ -19,9 +19,11 @@ impl Expression {
                 receiver,
                 method,
                 args,
-            } => receiver
-                .evaluate(namespace)?
-                .apply(method, &eval_args(args, namespace)?, span),
+            } => receiver.evaluate(namespace)?.method(
+                method.into(),
+                &eval_args(args, namespace)?,
+                &span,
+            ),
         }
     }
 }
@@ -47,7 +49,7 @@ mod tests {
     }
 
     fn length_val(mm: f64) -> Member {
-        Member::Length(Length::from_mm(mm))
+        Member::Instance(Box::new(Length::from_mm(mm)))
     }
 
     #[test]
@@ -55,7 +57,10 @@ mod tests {
         let expression = Expression(ExprKind::Literal("3.15".into()), Span::empty());
         let namespace = PartNamespace::new();
 
-        assert_eq!(expression.evaluate(&namespace), Ok(Member::Number(3.15)),)
+        assert_eq!(
+            expression.evaluate(&namespace),
+            Ok(Member::Instance(Box::new(3.15))),
+        )
     }
 
     #[test]
@@ -65,7 +70,7 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Member::Length(Length::from_mm(5.))),
+            Ok(Member::Instance(Box::new(Length::from_mm(5.)))),
         )
     }
 
@@ -94,7 +99,7 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Member::Part(Cuboid::from_mm(5., 6., 7.))),
+            Ok(Member::Instance(Box::new(Cuboid::from_mm(5., 6., 7.)))),
         )
     }
 
@@ -133,9 +138,9 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Member::Part(
+            Ok(Member::Instance(Box::new(
                 Cuboid::from_mm(1., 1., 5.).add(&Cuboid::from_mm(5., 1., 1.))
-            )),
+            ))),
         )
     }
 }

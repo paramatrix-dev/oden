@@ -3,7 +3,7 @@ use regex::Regex;
 
 use crate::{Error, Span, Type, namespace::traits::Instance};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Member {
     Instance(Box<dyn Instance>),
     Type(Box<dyn Type>),
@@ -31,9 +31,10 @@ impl Member {
             Member::Type(_) => "Type".into(),
         }
     }
-    pub fn method(&self, name) -> Result<Self, Error> {
+    pub fn method(&self, name: String, args: &[Member], span: &Span) -> Result<Self, Error> {
         match self {
-            Self::Instance(inner) => inner.method(name, span)
+            Self::Instance(inner) => inner.method(name, span)?.call(args, span.clone()),
+            Self::Type(inner) => inner.method(name, span)?.call(args, span.clone()),
         }
     }
 }
