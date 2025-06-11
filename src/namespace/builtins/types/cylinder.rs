@@ -1,7 +1,7 @@
 use anvil::{Cylinder, Length};
 
 use crate::{
-    Error, Span, match_args,
+    Error, Span, from_type_member, match_args,
     namespace::{
         Member,
         traits::{Callable, Instance, Type},
@@ -9,6 +9,7 @@ use crate::{
 };
 
 impl Type for Cylinder {}
+from_type_member!(Cylinder);
 
 impl Callable for Cylinder {
     fn full_name(&self) -> String {
@@ -28,5 +29,21 @@ impl Instance for Cylinder {
     }
     fn type_name(&self) -> String {
         "Type".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anvil::IntoLength;
+
+    use super::*;
+    use crate::eval_str;
+
+    #[test]
+    fn construct() {
+        assert_eq!(
+            eval_str("Cylinder(5m, 6m)"),
+            Ok(Cylinder::from_radius(5.m(), 6.m()).into())
+        )
     }
 }

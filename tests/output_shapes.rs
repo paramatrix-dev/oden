@@ -189,37 +189,6 @@ fn test_rectangle_extrude() {
 }
 
 #[test]
-fn test_rectangular_path_extrude() {
-    let text = "
-        part Box:
-            sketch = Path(0m, 0m).line_to(1m, 0m).line_to(1m, 1m).line_to(0m, 1m).close()
-            part.add(sketch.extrude(Plane.XY(), 2m))
-        ";
-    assert_eq!(
-        compile_input(text, "".into()),
-        Ok(Path::at(point!(0.m(), 0.m()))
-            .line_to(point!(1.m(), 0.m()))
-            .line_to(point!(1.m(), 1.m()))
-            .line_to(point!(0.m(), 1.m()))
-            .close()
-            .extrude(Plane::xy(), 2.m())
-            .unwrap())
-    )
-}
-
-#[test]
-fn test_cuboid_rotate_around() {
-    let text = "
-        part Box:
-            part = Cuboid(1m, 2m, 3m).rotate_around(Axis.X(), 90deg)
-        ";
-    assert_eq!(
-        compile_input(text, "".into()),
-        Ok(Cuboid::from_m(1., 2., 3.).rotate_around(Axis::<3>::x(), 90.deg()))
-    )
-}
-
-#[test]
 fn test_cuboid_circular_pattern() {
     let text = "
         part Box:

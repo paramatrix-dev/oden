@@ -8,3 +8,14 @@ impl PartialEq for Box<dyn Type> {
         self.full_name() == other.full_name()
     }
 }
+
+#[macro_export]
+macro_rules! from_type_member {
+    ($from:ty) => {
+        impl From<$from> for $crate::Member {
+            fn from(value: $from) -> Self {
+                $crate::Member::Type(Box::new(value))
+            }
+        }
+    };
+}

@@ -1,6 +1,6 @@
 use anvil::Path;
 
-use crate::namespace::traits::Instance;
+use crate::{from_instance_member, namespace::traits::Instance};
 
 impl Instance for Path {
     fn eq(&self, other: &dyn Instance) -> bool {
@@ -13,3 +13,4 @@ impl Instance for Path {
         "Path".into()
     }
 }
+from_instance_member!(Path);

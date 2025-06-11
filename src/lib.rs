@@ -7,6 +7,7 @@ mod syntax;
 
 pub use compile::compile_input;
 pub use errors::Error;
+pub use namespace::builtins::{AxisType, PathType, PlaneType};
 pub use namespace::traits::{Callable, Instance, Type};
 pub use namespace::{Member, PartNamespace};
 pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, eval_str, tokenize};

@@ -1,7 +1,7 @@
 use anvil::{Circle, Length};
 
 use crate::{
-    Error, Span, match_args,
+    Error, Span, from_type_member, match_args,
     namespace::{
         Member,
         traits::{Callable, Instance, Type},
@@ -9,6 +9,7 @@ use crate::{
 };
 
 impl Type for Circle {}
+from_type_member!(Circle);
 
 impl Callable for Circle {
     fn full_name(&self) -> String {
@@ -26,5 +27,21 @@ impl Instance for Circle {
     }
     fn type_name(&self) -> String {
         "Type".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anvil::IntoLength;
+
+    use super::*;
+    use crate::eval_str;
+
+    #[test]
+    fn construct() {
+        assert_eq!(
+            eval_str("Circle(5m)"),
+            Ok(Circle::from_radius(5.m()).into())
+        )
     }
 }

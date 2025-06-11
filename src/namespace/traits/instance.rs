@@ -23,6 +23,17 @@ pub trait Instance: Debug + DynClone + Downcast {
     fn eq(&self, other: &dyn Instance) -> bool;
 }
 
+#[macro_export]
+macro_rules! from_instance_member {
+    ($from:ty) => {
+        impl From<$from> for $crate::Member {
+            fn from(value: $from) -> Self {
+                $crate::Member::Instance(Box::new(value))
+            }
+        }
+    };
+}
+
 clone_trait_object!(Instance);
 impl_downcast!(Instance);
 

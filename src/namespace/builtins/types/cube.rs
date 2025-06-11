@@ -1,7 +1,7 @@
 use anvil::{Cube, Length};
 
 use crate::{
-    Error, Span, match_args,
+    Error, Span, from_type_member, match_args,
     namespace::{
         Member,
         traits::{Callable, Instance, Type},
@@ -9,6 +9,7 @@ use crate::{
 };
 
 impl Type for Cube {}
+from_type_member!(Cube);
 
 impl Callable for Cube {
     fn full_name(&self) -> String {
@@ -26,5 +27,18 @@ impl Instance for Cube {
     }
     fn type_name(&self) -> String {
         "Type".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anvil::IntoLength;
+
+    use super::*;
+    use crate::eval_str;
+
+    #[test]
+    fn construct() {
+        assert_eq!(eval_str("Cube(5m)"), Ok(Cube::from_size(5.m()).into()))
     }
 }

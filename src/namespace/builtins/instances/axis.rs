@@ -1,6 +1,6 @@
 use anvil::Axis;
 
-use crate::namespace::traits::Instance;
+use crate::{from_instance_member, namespace::traits::Instance};
 
 impl Instance for Axis<3> {
     fn eq(&self, other: &dyn Instance) -> bool {
@@ -13,3 +13,4 @@ impl Instance for Axis<3> {
         "Axis".into()
     }
 }
+from_instance_member!(Axis<3>);

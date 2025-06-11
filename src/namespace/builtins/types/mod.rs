@@ -1,13 +1,9 @@
-mod axis;
-mod circle;
-mod cube;
-mod cuboid;
-mod cylinder;
-mod path;
-mod plane;
-mod rectangle;
-mod sphere;
-
-pub use axis::AxisType;
-pub use path::PathType;
-pub use plane::PlaneType;
+pub mod axis;
+pub mod circle;
+pub mod cube;
+pub mod cuboid;
+pub mod cylinder;
+pub mod path;
+pub mod plane;
+pub mod rectangle;
+pub mod sphere;

@@ -42,12 +42,13 @@ macro_rules! match_args {
             [$crate::Member::Instance(t1)] => {
                 let a1 = match t1.downcast_ref::<$first>() {
                     Some(a) => Ok(a),
-                    None => Err(Error::ArgumentType {
-                        should: "Length".into(),
+                    None => Err($crate::Error::Arguments {
+                        should: vec![stringify!($first).into()],
+                        is: $args.iter().map(|arg| arg.type_name()).collect(),
                         span: $span.clone(),
                     }),
-                };
-                (a1.unwrap())
+                }?;
+                a1
             }
             _ => {
                 return Err($crate::Error::Arguments {
@@ -63,19 +64,21 @@ macro_rules! match_args {
             [$crate::Member::Instance(t1), $crate::Member::Instance(t2)] => {
                 let a1 = match t1.downcast_ref::<$first>() {
                     Some(a) => Ok(*a),
-                    None => Err(Error::ArgumentType {
-                        should: "Length".into(),
+                    None => Err($crate::Error::Arguments {
+                        should: vec![stringify!($first).into(), stringify!($second).into()],
+                        is: $args.iter().map(|arg| arg.type_name()).collect(),
                         span: $span.clone(),
                     }),
-                };
+                }?;
                 let a2 = match t2.downcast_ref::<$second>() {
                     Some(a) => Ok(*a),
-                    None => Err(Error::ArgumentType {
-                        should: "Length".into(),
+                    None => Err($crate::Error::Arguments {
+                        should: vec![stringify!($first).into(), stringify!($second).into()],
+                        is: $args.iter().map(|arg| arg.type_name()).collect(),
                         span: $span.clone(),
                     }),
-                };
-                (a1.unwrap(), a2.unwrap())
+                }?;
+                (a1, a2)
             }
             _ => {
                 return Err($crate::Error::Arguments {
@@ -95,26 +98,41 @@ macro_rules! match_args {
             ] => {
                 let a1 = match t1.downcast_ref::<$first>() {
                     Some(a) => Ok(*a),
-                    None => Err(Error::ArgumentType {
-                        should: "Length".into(),
+                    None => Err($crate::Error::Arguments {
+                        should: vec![
+                            stringify!($first).into(),
+                            stringify!($second).into(),
+                            stringify!($third).into(),
+                        ],
+                        is: $args.iter().map(|arg| arg.type_name()).collect(),
                         span: $span.clone(),
                     }),
-                };
+                }?;
                 let a2 = match t2.downcast_ref::<$second>() {
                     Some(a) => Ok(*a),
-                    None => Err(Error::ArgumentType {
-                        should: "Length".into(),
+                    None => Err($crate::Error::Arguments {
+                        should: vec![
+                            stringify!($first).into(),
+                            stringify!($second).into(),
+                            stringify!($third).into(),
+                        ],
+                        is: $args.iter().map(|arg| arg.type_name()).collect(),
                         span: $span.clone(),
                     }),
-                };
+                }?;
                 let a3 = match t3.downcast_ref::<$second>() {
                     Some(a) => Ok(*a),
-                    None => Err(Error::ArgumentType {
-                        should: "Length".into(),
+                    None => Err($crate::Error::Arguments {
+                        should: vec![
+                            stringify!($first).into(),
+                            stringify!($second).into(),
+                            stringify!($third).into(),
+                        ],
+                        is: $args.iter().map(|arg| arg.type_name()).collect(),
                         span: $span.clone(),
                     }),
-                };
-                (a1.unwrap(), a2.unwrap(), a3.unwrap())
+                }?;
+                (a1, a2, a3)
             }
             _ => {
                 return Err($crate::Error::Arguments {

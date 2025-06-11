@@ -6,28 +6,7 @@ use crate::syntax::Span;
 /// The errors that can occurr during compilation.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Error {
-    /// Occurs when a function or method is called with an incorrect number or arguments.
-    ///
-    /// # Example
-    /// ```oden
-    /// part MyPart:
-    ///     part.add(Cube(5mm), Cube(6mm))  // add() only takes a single argument
-    /// ```
-    ArgumentNumber {
-        should: usize,
-        is: usize,
-        span: Span,
-    },
-
-    /// Occurs when an argument to a function or method is of the wrong type.
-    ///
-    /// # Example
-    /// ```oden
-    /// part MyPart:
-    ///     part.add(1mm)  // the argument for add() should be a shape not a length
-    /// ```
-    ArgumentType { should: String, span: Span },
-
+    /// Occurs when the arguments to a callable are not correct.
     Arguments {
         should: Vec<String>,
         is: Vec<String>,

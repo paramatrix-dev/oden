@@ -1,7 +1,7 @@
 use anvil::{Length, Rectangle};
 
 use crate::{
-    Error, Span, match_args,
+    Error, Span, from_type_member, match_args,
     namespace::{
         Member,
         traits::{Callable, Instance, Type},
@@ -9,6 +9,7 @@ use crate::{
 };
 
 impl Type for Rectangle {}
+from_type_member!(Rectangle);
 
 impl Callable for Rectangle {
     fn full_name(&self) -> String {
@@ -26,5 +27,21 @@ impl Instance for Rectangle {
     }
     fn type_name(&self) -> String {
         "Type".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use anvil::IntoLength;
+
+    use super::*;
+    use crate::eval_str;
+
+    #[test]
+    fn construct() {
+        assert_eq!(
+            eval_str("Rectangle(5m, 6m)"),
+            Ok(Rectangle::from_dim(5.m(), 6.m()).into())
+        )
     }
 }

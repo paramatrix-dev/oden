@@ -35,11 +35,11 @@ fn test_missing_arguments() {
 
     assert_eq!(
         compile_input(text, "".into()),
-        Err(Error::ArgumentNumber {
-            should: 3,
-            is: 2,
+        Err(Error::Arguments {
+            should: vec!["Length".into(), "Length".into(), "Length".into()],
+            is: vec!["Length".into(), "Length".into()],
             span: Span(32, 48, "".into())
-        },)
+        })
     )
 }
 
@@ -52,11 +52,16 @@ fn test_too_many_arguments() {
 
     assert_eq!(
         compile_input(text, "".into()),
-        Err(Error::ArgumentNumber {
-            should: 3,
-            is: 4,
+        Err(Error::Arguments {
+            should: vec!["Length".into(), "Length".into(), "Length".into()],
+            is: vec![
+                "Length".into(),
+                "Length".into(),
+                "Length".into(),
+                "Length".into()
+            ],
             span: Span(32, 58, "".into())
-        },)
+        })
     )
 }
 
@@ -69,10 +74,11 @@ fn test_wrong_argument_type() {
 
     assert_eq!(
         compile_input(text, "".into()),
-        Err(Error::ArgumentType {
-            should: "Length".into(),
+        Err(Error::Arguments {
+            should: vec!["Length".into(), "Length".into(), "Length".into()],
+            is: vec!["Length".into(), "Length".into(), "Part".into(),],
             span: Span(32, 71, "".into())
-        },)
+        })
     )
 }
 
@@ -185,8 +191,9 @@ fn test_scalar_instead_of_length() {
 
     assert_eq!(
         compile_input(text, "".into()),
-        Err(Error::ArgumentType {
-            should: "Length".into(),
+        Err(Error::Arguments {
+            should: vec!["Length".into(), "Length".into(), "Length".into()],
+            is: vec!["Number".into(), "Length".into(), "Length".into(),],
             span: Span(32, 51, "".into())
         })
     )
@@ -214,9 +221,9 @@ fn test_too_many_args_in_add() {
 
     assert_eq!(
         compile_input(text, "".into()),
-        Err(Error::ArgumentNumber {
-            should: 1,
-            is: 2,
+        Err(Error::Arguments {
+            should: vec!["Part".into()],
+            is: vec!["Part".into(), "Length".into(),],
             span: Span(23, 59, "".into())
         })
     )
@@ -231,8 +238,9 @@ fn test_add_wrong_argument_type() {
 
     assert_eq!(
         compile_input(text, "".into()),
-        Err(Error::ArgumentType {
-            should: "Part".into(),
+        Err(Error::Arguments {
+            should: vec!["Part".into()],
+            is: vec!["Length".into(),],
             span: Span(23, 36, "".into())
         })
     )

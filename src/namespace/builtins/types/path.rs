@@ -1,7 +1,7 @@
 use anvil::{Length, Path, point};
 
 use crate::{
-    Error, Span, match_args,
+    Error, Span, from_type_member, match_args,
     namespace::{
         Member,
         traits::{Callable, Instance, Type},
@@ -11,6 +11,7 @@ use crate::{
 #[derive(Clone, Debug, PartialEq)]
 pub struct PathType;
 impl Type for PathType {}
+from_type_member!(PathType);
 
 impl Callable for PathType {
     fn full_name(&self) -> String {
@@ -28,5 +29,19 @@ impl Instance for PathType {
     }
     fn type_name(&self) -> String {
         "Type".into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::eval_str;
+    use anvil::{IntoLength, Path, point};
+
+    #[test]
+    fn construct() {
+        assert_eq!(
+            eval_str("Path(1m, 2m)"),
+            Ok(Path::at(point!(1.m(), 2.m())).into())
+        )
     }
 }
