@@ -1,4 +1,4 @@
-use anvil::{Axis, Cuboid, Cylinder, IntoAngle, IntoLength, Path, Plane, Rectangle, Sphere, point};
+use anvil::{Axis, Cuboid, Cylinder, IntoLength, Plane, Rectangle, Sphere, point};
 use oden::compile_input;
 
 #[test]
