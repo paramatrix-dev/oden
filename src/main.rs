@@ -1,8 +1,7 @@
 use clap::Parser;
 use std::path::PathBuf;
 
-use oden::compile;
-use oden::errors::Error;
+use oden::{Error, compile};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]

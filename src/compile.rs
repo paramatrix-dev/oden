@@ -1,8 +1,8 @@
 use anvil::Part;
 
 use crate::{
+    PartNamespace,
     errors::Error,
-    namespaces::PartNamespace,
     syntax::{Statement, separate_tokens_by_statement, tokenize},
 };
 use std::path::PathBuf;

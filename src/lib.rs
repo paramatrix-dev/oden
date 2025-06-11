@@ -1,13 +1,16 @@
-pub mod compile;
-pub mod errors;
-pub mod namespaces;
-pub mod syntax;
-pub mod values;
-
-use compile::compile_input;
-use errors::Error;
 use std::path::PathBuf;
-pub use values::Value;
+
+mod compile;
+mod errors;
+mod namespace;
+mod syntax;
+
+pub use compile::compile_input;
+pub use errors::Error;
+pub use namespace::builtins::{AxisType, PathType, PlaneType};
+pub use namespace::traits::{Callable, Instance, Type};
+pub use namespace::{Member, PartNamespace};
+pub use syntax::{ExprKind, Expression, Span, Statement, Token, TokenKind, eval_str, tokenize};
 
 /// Compile an oden file and write the resulting shape into an STEP file.
 pub fn compile(source: PathBuf, target: PathBuf) -> Result<(), Error> {

@@ -1,32 +1,34 @@
 use super::{ExprKind, Expression};
-use crate::{errors::Error, namespaces::PartNamespace, values::Value};
+use crate::{Member, PartNamespace, errors::Error};
 
 impl Expression {
-    /// Evaluate an expression to a Value.
-    pub fn evaluate(&self, namespace: &PartNamespace) -> Result<Value, Error> {
+    /// Evaluate an expression to a Member.
+    pub fn evaluate(&self, namespace: &PartNamespace) -> Result<Member, Error> {
         let span = self.span().clone();
         match self.kind() {
-            ExprKind::Literal(val) => Value::from_str(val, span),
+            ExprKind::Literal(val) => Member::from_str(val, span),
             ExprKind::Ident(key) => match namespace.get(key) {
                 Some(val) => Ok(val.clone()),
                 None => Err(Error::UnknownVariable(key.to_owned(), span)),
             },
             ExprKind::Function { name, args } => match namespace.get(name) {
-                Some(Value::Type(t)) => t.construct()(&eval_args(args, namespace)?, span),
+                Some(Member::Type(t)) => t.call(&eval_args(args, namespace)?, span),
                 _ => Err(Error::UnknownFunction(name.to_owned(), span)),
             },
             ExprKind::Method {
                 receiver,
                 method,
                 args,
-            } => receiver
-                .evaluate(namespace)?
-                .apply(method, &eval_args(args, namespace)?, span),
+            } => receiver.evaluate(namespace)?.method(
+                method.into(),
+                &eval_args(args, namespace)?,
+                &span,
+            ),
         }
     }
 }
 
-fn eval_args(args: &Vec<Expression>, namespace: &PartNamespace) -> Result<Vec<Value>, Error> {
+fn eval_args(args: &Vec<Expression>, namespace: &PartNamespace) -> Result<Vec<Member>, Error> {
     let mut evaluated = vec![];
 
     for arg in args {
@@ -46,8 +48,8 @@ mod tests {
         Expression(ExprKind::Literal(value.into()), Span::empty())
     }
 
-    fn length_val(mm: f64) -> Value {
-        Value::Length(Length::from_mm(mm))
+    fn length_val(mm: f64) -> Member {
+        Member::Instance(Box::new(Length::from_mm(mm)))
     }
 
     #[test]
@@ -55,7 +57,10 @@ mod tests {
         let expression = Expression(ExprKind::Literal("3.15".into()), Span::empty());
         let namespace = PartNamespace::new();
 
-        assert_eq!(expression.evaluate(&namespace), Ok(Value::Number(3.15)),)
+        assert_eq!(
+            expression.evaluate(&namespace),
+            Ok(Member::Instance(Box::new(3.15))),
+        )
     }
 
     #[test]
@@ -65,7 +70,7 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Value::Length(Length::from_mm(5.))),
+            Ok(Member::Instance(Box::new(Length::from_mm(5.)))),
         )
     }
 
@@ -94,7 +99,7 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Value::Part(Cuboid::from_mm(5., 6., 7.))),
+            Ok(Member::Instance(Box::new(Cuboid::from_mm(5., 6., 7.)))),
         )
     }
 
@@ -133,9 +138,9 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Value::Part(
+            Ok(Member::Instance(Box::new(
                 Cuboid::from_mm(1., 1., 5.).add(&Cuboid::from_mm(5., 1., 1.))
-            )),
+            ))),
         )
     }
 }
