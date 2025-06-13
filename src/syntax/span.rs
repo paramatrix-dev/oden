@@ -42,6 +42,54 @@ impl Span {
         self.1
     }
 
+    /// Return the line numbers this span is located in.
+    ///
+    /// ```rust
+    /// use oden::Span;
+    ///
+    /// let input = "
+    /// part Box:
+    ///     x = 5m
+    ///     y = 6m
+    ///     z = 7m
+    ///     
+    ///     part.add(Cuboid(x, y, z))
+    /// ";
+    /// assert_eq!(
+    ///     Span::from((15, 20, input)).lines(),
+    ///     (2, 2)
+    /// );
+    /// assert_eq!(
+    ///     Span::from((37, 78, input)).lines(),
+    ///     (4, 6)
+    /// );
+    /// assert_eq!(
+    ///     Span::from((1000, 1005, input)).lines(), // if the lines are out of bounds, the total
+    ///     (7, 7)                                   // line number is returned
+    /// );
+    /// ```
+    pub fn lines(&self) -> (usize, usize) {
+        let total_lines = self.2.chars().filter(|c| *c == '\n').count();
+        let mut start_line = total_lines;
+        let mut end_line = total_lines;
+
+        let mut current_line = 0;
+        for (i, char) in self.2.chars().enumerate() {
+            if char == '\n' {
+                current_line += 1;
+            }
+
+            if i == self.0 {
+                start_line = current_line;
+            }
+            if i == self.1 {
+                end_line = current_line;
+            }
+        }
+
+        (start_line, end_line)
+    }
+
     /// Return the union of two Spans.
     ///
     /// The new Span has the lowest start value its start and the highest end value as its end. The
