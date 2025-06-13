@@ -4,5 +4,5 @@ use crate::{Error, Expression, Member, PartNamespace, tokenize};
 ///
 /// This method is not used directly but only for testing and demonstration purposes.
 pub fn eval_str(input: &str) -> Result<Member, Error> {
-    Expression::from_tokens(&tokenize(input, &"".into())?)?.evaluate(&PartNamespace::new())
+    Expression::from_tokens(&tokenize(input)?)?.evaluate(&PartNamespace::new())
 }

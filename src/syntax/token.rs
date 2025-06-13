@@ -2,7 +2,7 @@ use super::Span;
 use crate::errors::Error;
 use std::{
     fmt::{Debug, Display},
-    path::{Path, PathBuf},
+    sync::Arc,
 };
 
 /// The smallest unit of meaning in the oden syntax.
@@ -19,7 +19,7 @@ impl Token {
     /// ```rust
     /// use oden::{Token, TokenKind, Span};
     ///
-    /// let token = Token(TokenKind::Dot, Span(15, 16, "/file.oden".into()));
+    /// let token = Token(TokenKind::Dot, Span::from((15, 16, "part Box: ...")));
     /// assert_eq!(token.kind(), &TokenKind::Dot)
     /// ```
     pub fn kind(&self) -> &TokenKind {
@@ -32,8 +32,8 @@ impl Token {
     /// ```rust
     /// use oden::{Token, TokenKind, Span};
     ///
-    /// let token = Token(TokenKind::Dot, Span(15, 16, "/file.oden".into()));
-    /// assert_eq!(token.span(), &Span(15, 16, "/file.oden".into()))
+    /// let token = Token(TokenKind::Dot, Span::from((15, 16, "part Box: ...")));
+    /// assert_eq!(token.span(), &Span::from((15, 16, "part Box: ...")))
     /// ```
     pub fn span(&self) -> &Span {
         &self.1
@@ -74,13 +74,14 @@ pub enum TokenKind {
 
 /// Convert a text input into tokens.
 #[allow(clippy::ptr_arg)]
-pub fn tokenize(input: &str, file: &PathBuf) -> Result<Vec<Token>, Error> {
+pub fn tokenize(input: &str) -> Result<Vec<Token>, Error> {
     let chars: Vec<char> = input.chars().collect();
+    let context: Arc<String> = Arc::new(input.into());
     let mut tokens = Vec::new();
     let mut pos = 0;
 
     while pos < chars.len() {
-        let (token, advance) = parse_next_token(&chars, pos, file)?;
+        let (token, advance) = parse_next_token(&chars, pos, context.clone())?;
         if let Some(t) = token {
             tokens.push(t)
         }
@@ -93,38 +94,44 @@ pub fn tokenize(input: &str, file: &PathBuf) -> Result<Vec<Token>, Error> {
 fn parse_next_token(
     chars: &[char],
     pos: usize,
-    file: &Path,
+    context: Arc<String>,
 ) -> Result<(Option<Token>, usize), Error> {
     let start = pos;
     let ch = chars[pos];
 
     match ch {
         '.' => Ok((
-            Some(Token(TokenKind::Dot, Span(pos, pos + 1, file.into()))),
+            Some(Token(TokenKind::Dot, Span(pos, pos + 1, context.clone()))),
             1,
         )),
         ',' => Ok((
-            Some(Token(TokenKind::Comma, Span(pos, pos + 1, file.into()))),
+            Some(Token(TokenKind::Comma, Span(pos, pos + 1, context.clone()))),
             1,
         )),
         '(' => Ok((
-            Some(Token(TokenKind::LParen, Span(pos, pos + 1, file.into()))),
+            Some(Token(
+                TokenKind::LParen,
+                Span(pos, pos + 1, context.clone()),
+            )),
             1,
         )),
         ')' => Ok((
-            Some(Token(TokenKind::RParen, Span(pos, pos + 1, file.into()))),
+            Some(Token(
+                TokenKind::RParen,
+                Span(pos, pos + 1, context.clone()),
+            )),
             1,
         )),
         '=' => Ok((
-            Some(Token(TokenKind::Equal, Span(pos, pos + 1, file.into()))),
+            Some(Token(TokenKind::Equal, Span(pos, pos + 1, context.clone()))),
             1,
         )),
         ':' => Ok((
-            Some(Token(TokenKind::Colon, Span(pos, pos + 1, file.into()))),
+            Some(Token(TokenKind::Colon, Span(pos, pos + 1, context.clone()))),
             1,
         )),
         '+' => Ok((
-            Some(Token(TokenKind::Plus, Span(pos, pos + 1, file.into()))),
+            Some(Token(TokenKind::Plus, Span(pos, pos + 1, context.clone()))),
             1,
         )),
         '-' => {
@@ -134,23 +141,29 @@ fn parse_next_token(
                 Ok((
                     Some(Token(
                         TokenKind::Literal(literal),
-                        Span(start, end, file.into()),
+                        Span(start, end, context.clone()),
                     )),
                     end - start,
                 ))
             } else {
                 Ok((
-                    Some(Token(TokenKind::Minus, Span(pos, pos + 1, file.into()))),
+                    Some(Token(TokenKind::Minus, Span(pos, pos + 1, context.clone()))),
                     1,
                 ))
             }
         }
         '*' => Ok((
-            Some(Token(TokenKind::Asterisk, Span(pos, pos + 1, file.into()))),
+            Some(Token(
+                TokenKind::Asterisk,
+                Span(pos, pos + 1, context.clone()),
+            )),
             1,
         )),
         '\n' => Ok((
-            Some(Token(TokenKind::LineBreak, Span(pos, pos + 1, file.into()))),
+            Some(Token(
+                TokenKind::LineBreak,
+                Span(pos, pos + 1, context.clone()),
+            )),
             1,
         )),
         '/' => {
@@ -159,12 +172,12 @@ fn parse_next_token(
                 Some('/') => Ok((
                     Some(Token(
                         TokenKind::DoubleSlash,
-                        Span(pos, pos + 2, file.into()),
+                        Span(pos, pos + 2, context.clone()),
                     )),
                     2,
                 )),
                 _ => Ok((
-                    Some(Token(TokenKind::Slash, Span(pos, pos + 1, file.into()))),
+                    Some(Token(TokenKind::Slash, Span(pos, pos + 1, context.clone()))),
                     1,
                 )),
             }
@@ -181,7 +194,7 @@ fn parse_next_token(
             Ok((
                 Some(Token(
                     TokenKind::Ident(identifyer),
-                    Span(start, end, file.into()),
+                    Span(start, end, context.clone()),
                 )),
                 advance,
             ))
@@ -191,12 +204,12 @@ fn parse_next_token(
             Ok((
                 Some(Token(
                     TokenKind::Literal(literal),
-                    Span(start, end, file.into()),
+                    Span(start, end, context.clone()),
                 )),
                 end - start,
             ))
         }
-        _ => Err(Error::UnexpectedSymbol(Span(pos, pos + 1, file.into()))),
+        _ => Err(Error::UnexpectedSymbol(Span(pos, pos + 1, context.clone()))),
     }
 }
 
@@ -259,10 +272,10 @@ mod tests {
     fn test_single_identifyer() {
         let input = "height";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![Token(
                 TokenKind::Ident("height".into()),
-                Span(0, 6, "".into())
+                Span::from((0, 6, input))
             )])
         )
     }
@@ -271,10 +284,10 @@ mod tests {
     fn test_length_literal() {
         let input = "5mm";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![Token(
                 TokenKind::Literal("5mm".into()),
-                Span(0, 3, "".into())
+                Span::from((0, 3, input))
             )])
         )
     }
@@ -283,10 +296,10 @@ mod tests {
     fn test_length_literal_with_period() {
         let input = "73.1234mm";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![Token(
                 TokenKind::Literal("73.1234mm".into()),
-                Span(0, 9, "".into())
+                Span::from((0, 9, input))
             )])
         )
     }
@@ -295,11 +308,11 @@ mod tests {
     fn test_two_identifyers_separated_by_dot() {
         let input = "part.add";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Ident("part".into()), Span(0, 4, "".into())),
-                Token(TokenKind::Dot, Span(4, 5, "".into())),
-                Token(TokenKind::Ident("add".into()), Span(5, 8, "".into())),
+                Token(TokenKind::Ident("part".into()), Span::from((0, 4, input))),
+                Token(TokenKind::Dot, Span::from((4, 5, input))),
+                Token(TokenKind::Ident("add".into()), Span::from((5, 8, input))),
             ])
         )
     }
@@ -308,11 +321,11 @@ mod tests {
     fn test_assignment() {
         let input = "height = 5mm";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Ident("height".into()), Span(0, 6, "".into())),
-                Token(TokenKind::Equal, Span(7, 8, "".into())),
-                Token(TokenKind::Literal("5mm".into()), Span(9, 12, "".into())),
+                Token(TokenKind::Ident("height".into()), Span::from((0, 6, input))),
+                Token(TokenKind::Equal, Span::from((7, 8, input))),
+                Token(TokenKind::Literal("5mm".into()), Span::from((9, 12, input))),
             ])
         )
     }
@@ -321,11 +334,11 @@ mod tests {
     fn test_addition() {
         let input = "1 + 2";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Literal("1".into()), Span(0, 1, "".into())),
-                Token(TokenKind::Plus, Span(2, 3, "".into())),
-                Token(TokenKind::Literal("2".into()), Span(4, 5, "".into())),
+                Token(TokenKind::Literal("1".into()), Span::from((0, 1, input))),
+                Token(TokenKind::Plus, Span::from((2, 3, input))),
+                Token(TokenKind::Literal("2".into()), Span::from((4, 5, input))),
             ])
         )
     }
@@ -334,11 +347,11 @@ mod tests {
     fn test_subtraction() {
         let input = "1 - 2";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Literal("1".into()), Span(0, 1, "".into())),
-                Token(TokenKind::Minus, Span(2, 3, "".into())),
-                Token(TokenKind::Literal("2".into()), Span(4, 5, "".into())),
+                Token(TokenKind::Literal("1".into()), Span::from((0, 1, input))),
+                Token(TokenKind::Minus, Span::from((2, 3, input))),
+                Token(TokenKind::Literal("2".into()), Span::from((4, 5, input))),
             ])
         )
     }
@@ -347,11 +360,11 @@ mod tests {
     fn test_multiplication() {
         let input = "1 * 2";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Literal("1".into()), Span(0, 1, "".into())),
-                Token(TokenKind::Asterisk, Span(2, 3, "".into())),
-                Token(TokenKind::Literal("2".into()), Span(4, 5, "".into())),
+                Token(TokenKind::Literal("1".into()), Span::from((0, 1, input))),
+                Token(TokenKind::Asterisk, Span::from((2, 3, input))),
+                Token(TokenKind::Literal("2".into()), Span::from((4, 5, input))),
             ])
         )
     }
@@ -360,11 +373,11 @@ mod tests {
     fn test_division() {
         let input = "1 / 2";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Literal("1".into()), Span(0, 1, "".into())),
-                Token(TokenKind::Slash, Span(2, 3, "".into())),
-                Token(TokenKind::Literal("2".into()), Span(4, 5, "".into())),
+                Token(TokenKind::Literal("1".into()), Span::from((0, 1, input))),
+                Token(TokenKind::Slash, Span::from((2, 3, input))),
+                Token(TokenKind::Literal("2".into()), Span::from((4, 5, input))),
             ])
         )
     }
@@ -373,10 +386,13 @@ mod tests {
     fn test_comment() {
         let input = "// a_comment";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::DoubleSlash, Span(0, 2, "".into())),
-                Token(TokenKind::Ident("a_comment".into()), Span(3, 12, "".into())),
+                Token(TokenKind::DoubleSlash, Span::from((0, 2, input))),
+                Token(
+                    TokenKind::Ident("a_comment".into()),
+                    Span::from((3, 12, input))
+                ),
             ])
         )
     }
@@ -385,11 +401,11 @@ mod tests {
     fn test_part_declaration() {
         let input = "part Box:";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Ident("part".into()), Span(0, 4, "".into())),
-                Token(TokenKind::Ident("Box".into()), Span(5, 8, "".into())),
-                Token(TokenKind::Colon, Span(8, 9, "".into())),
+                Token(TokenKind::Ident("part".into()), Span::from((0, 4, input))),
+                Token(TokenKind::Ident("Box".into()), Span::from((5, 8, input))),
+                Token(TokenKind::Colon, Span::from((8, 9, input))),
             ])
         )
     }
@@ -398,11 +414,14 @@ mod tests {
     fn test_function_call_without_args() {
         let input = "construct()";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Ident("construct".into()), Span(0, 9, "".into())),
-                Token(TokenKind::LParen, Span(9, 10, "".into())),
-                Token(TokenKind::RParen, Span(10, 11, "".into())),
+                Token(
+                    TokenKind::Ident("construct".into()),
+                    Span::from((0, 9, input))
+                ),
+                Token(TokenKind::LParen, Span::from((9, 10, input))),
+                Token(TokenKind::RParen, Span::from((10, 11, input))),
             ])
         )
     }
@@ -411,14 +430,23 @@ mod tests {
     fn test_function_call_with_args() {
         let input = "Rectangle(5mm, 6mm)";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Ident("Rectangle".into()), Span(0, 9, "".into())),
-                Token(TokenKind::LParen, Span(9, 10, "".into())),
-                Token(TokenKind::Literal("5mm".into()), Span(10, 13, "".into())),
-                Token(TokenKind::Comma, Span(13, 14, "".into())),
-                Token(TokenKind::Literal("6mm".into()), Span(15, 18, "".into())),
-                Token(TokenKind::RParen, Span(18, 19, "".into())),
+                Token(
+                    TokenKind::Ident("Rectangle".into()),
+                    Span::from((0, 9, input))
+                ),
+                Token(TokenKind::LParen, Span::from((9, 10, input))),
+                Token(
+                    TokenKind::Literal("5mm".into()),
+                    Span::from((10, 13, input))
+                ),
+                Token(TokenKind::Comma, Span::from((13, 14, input))),
+                Token(
+                    TokenKind::Literal("6mm".into()),
+                    Span::from((15, 18, input))
+                ),
+                Token(TokenKind::RParen, Span::from((18, 19, input))),
             ])
         )
     }
@@ -431,18 +459,27 @@ mod tests {
             6mm
         )";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::LineBreak, Span(0, 1, "".into())),
-                Token(TokenKind::Ident("Rectangle".into()), Span(9, 18, "".into())),
-                Token(TokenKind::LParen, Span(18, 19, "".into())),
-                Token(TokenKind::LineBreak, Span(19, 20, "".into())),
-                Token(TokenKind::Literal("5mm".into()), Span(32, 35, "".into())),
-                Token(TokenKind::Comma, Span(35, 36, "".into())),
-                Token(TokenKind::LineBreak, Span(36, 37, "".into())),
-                Token(TokenKind::Literal("6mm".into()), Span(49, 52, "".into())),
-                Token(TokenKind::LineBreak, Span(52, 53, "".into())),
-                Token(TokenKind::RParen, Span(61, 62, "".into())),
+                Token(TokenKind::LineBreak, Span::from((0, 1, input))),
+                Token(
+                    TokenKind::Ident("Rectangle".into()),
+                    Span::from((9, 18, input))
+                ),
+                Token(TokenKind::LParen, Span::from((18, 19, input))),
+                Token(TokenKind::LineBreak, Span::from((19, 20, input))),
+                Token(
+                    TokenKind::Literal("5mm".into()),
+                    Span::from((32, 35, input))
+                ),
+                Token(TokenKind::Comma, Span::from((35, 36, input))),
+                Token(TokenKind::LineBreak, Span::from((36, 37, input))),
+                Token(
+                    TokenKind::Literal("6mm".into()),
+                    Span::from((49, 52, input))
+                ),
+                Token(TokenKind::LineBreak, Span::from((52, 53, input))),
+                Token(TokenKind::RParen, Span::from((61, 62, input))),
             ])
         )
     }
@@ -452,11 +489,14 @@ mod tests {
         let input = "5mm
         6mm";
         assert_eq!(
-            tokenize(input, &"".into()),
+            tokenize(input),
             Ok(vec![
-                Token(TokenKind::Literal("5mm".into()), Span(0, 3, "".into())),
-                Token(TokenKind::LineBreak, Span(3, 4, "".into())),
-                Token(TokenKind::Literal("6mm".into()), Span(12, 15, "".into())),
+                Token(TokenKind::Literal("5mm".into()), Span::from((0, 3, input))),
+                Token(TokenKind::LineBreak, Span::from((3, 4, input))),
+                Token(
+                    TokenKind::Literal("6mm".into()),
+                    Span::from((12, 15, input))
+                ),
             ])
         )
     }
@@ -465,8 +505,8 @@ mod tests {
     fn test_unexpected_symbol() {
         let input = "&";
         assert_eq!(
-            tokenize(input, &"".into()),
-            Err(Error::UnexpectedSymbol(Span(0, 1, "".into())))
+            tokenize(input),
+            Err(Error::UnexpectedSymbol(Span::from((0, 1, input))))
         )
     }
 }

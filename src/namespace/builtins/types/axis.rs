@@ -1,13 +1,13 @@
 use anvil::Axis;
 
 use crate::{
-    from_instance_member, match_args,
+    from_type_member, match_args,
     namespace::traits::{Callable, Instance, Type},
 };
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AxisType;
-from_instance_member!(AxisType);
+from_type_member!(AxisType);
 
 impl Type for AxisType {}
 

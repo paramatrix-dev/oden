@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::sync::Arc;
 
 use super::Token;
 
@@ -7,25 +7,23 @@ use super::Token;
 /// Span is used to trace where in the .oden file a Token / Expression / Statement is defined. This
 /// helps in guiding the user to the source of a specific error.
 ///
-/// # Example:
 /// ```rust
 /// use oden::Span;
 ///
 /// let start = 5;  // inclusive
 /// let end = 8;    // exclusive
-/// let path = "/path/to/file".into();
-/// Span(start, end, path);
+/// let context = "part Box:\n    part.add(Cube(1m))".into();
+/// Span::from((start, end, context));
 /// ```
 #[derive(Debug, Clone, PartialEq)]
-pub struct Span(pub usize, pub usize, pub PathBuf);
+pub struct Span(pub usize, pub usize, pub Arc<String>);
 impl Span {
     /// Return the start of the Span (the first field).
     ///
-    /// # Example
     /// ```rust
     /// use oden::Span;
     ///
-    /// let span = Span(1, 5, "/path/to/file".into());
+    /// let span = Span::from((1, 5, "part Box: ..."));
     /// assert_eq!(span.start(), 1)
     /// ```
     pub fn start(&self) -> usize {
@@ -34,29 +32,14 @@ impl Span {
 
     /// Return the end of the Span (the second field).
     ///
-    /// # Example
     /// ```rust
     /// use oden::Span;
     ///
-    /// let span = Span(1, 5, "/path/to/file".into());
+    /// let span = Span::from((1, 5, "part Box: ..."));
     /// assert_eq!(span.end(), 5)
     /// ```
     pub fn end(&self) -> usize {
         self.1
-    }
-
-    /// Return the path of the Span (the third field).
-    ///
-    /// # Example
-    /// ```rust
-    /// use std::path::PathBuf;
-    /// use oden::Span;
-    ///
-    /// let span = Span(1, 5, "/path/to/file".into());
-    /// assert_eq!(span.path(), PathBuf::from("/path/to/file"))
-    /// ```
-    pub fn path(&self) -> PathBuf {
-        self.2.clone()
     }
 
     /// Return the union of two Spans.
@@ -64,13 +47,12 @@ impl Span {
     /// The new Span has the lowest start value its start and the highest end value as its end. The
     /// path is cloned as it is assumed that only Spans from the same file are merged.
     ///
-    /// # Example
     /// ```rust
     /// use oden::Span;
     ///
-    /// let span1 = Span(1, 5, "/path/to/file".into());
-    /// let span2 = Span(4, 8, "/path/to/file".into());
-    /// assert_eq!(span1.merge(&span2), Span(1, 8, "/path/to/file".into()))
+    /// let span1 = Span::from((1, 5, "part Box: ..."));
+    /// let span2 = Span::from((4, 8, "part Box: ..."));
+    /// assert_eq!(span1.merge(&span2), Span::from((1, 8, "part Box: ...")))
     /// ```
     pub fn merge(&self, other: &Self) -> Self {
         let start: usize = if self.start() < other.start() {
@@ -84,6 +66,16 @@ impl Span {
             other.end()
         };
         Span(start, end, self.2.clone())
+    }
+}
+impl From<(usize, usize)> for Span {
+    fn from(value: (usize, usize)) -> Self {
+        Span(value.0, value.1, Arc::new("".into()))
+    }
+}
+impl From<(usize, usize, &str)> for Span {
+    fn from(value: (usize, usize, &str)) -> Self {
+        Span(value.0, value.1, Arc::new(value.2.into()))
     }
 }
 
@@ -106,31 +98,31 @@ mod tests {
 
     impl Span {
         pub fn empty() -> Self {
-            Span(0, 0, "".into())
+            Span(0, 0, Arc::new("".into()))
         }
     }
 
     #[test]
-    fn test_adjacent() {
-        let span = Span(5, 10, "".into());
-        assert_eq!(span.merge(&Span(10, 20, "".into())), Span(5, 20, "".into()))
+    fn merge_adjacent() {
+        let span = Span::from((5, 10));
+        assert_eq!(span.merge(&Span::from((10, 20))), Span::from((5, 20)))
     }
 
     #[test]
-    fn test_overlapping() {
-        let span = Span(5, 10, "".into());
-        assert_eq!(span.merge(&Span(7, 20, "".into())), Span(5, 20, "".into()))
+    fn merge_overlapping() {
+        let span = Span::from((5, 10));
+        assert_eq!(span.merge(&Span::from((7, 20))), Span::from((5, 20)))
     }
 
     #[test]
-    fn test_contained() {
-        let span = Span(5, 10, "".into());
-        assert_eq!(span.merge(&Span(7, 10, "".into())), Span(5, 10, "".into()))
+    fn merge_contained() {
+        let span = Span::from((5, 10));
+        assert_eq!(span.merge(&Span::from((7, 10))), Span::from((5, 10)))
     }
 
     #[test]
-    fn test_outside() {
-        let span = Span(5, 10, "".into());
-        assert_eq!(span.merge(&Span(20, 30, "".into())), Span(5, 30, "".into()))
+    fn merge_outside() {
+        let span = Span::from((5, 10));
+        assert_eq!(span.merge(&Span::from((20, 30))), Span::from((5, 30)))
     }
 }
