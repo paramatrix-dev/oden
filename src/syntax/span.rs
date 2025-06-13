@@ -135,14 +135,26 @@ impl Span {
         output.push_str(&" ".repeat(line_numbers_length));
         output.push_str(" |\n");
 
-        output.push_str(&line_numbers.0.to_string());
-        output.push_str(" |    ");
-        output.push_str(lines.first().unwrap());
+        if lines.len() == 1 {
+            output.push_str(&line_numbers.0.to_string());
+            output.push_str(" |    ");
+            output.push_str(lines.first().unwrap());
 
-        output.push('\n');
-        output.push_str(&" ".repeat(line_numbers_length));
-        output.push_str(" |    ");
-        output.push_str(&"^".repeat(self.1 - self.0));
+            output.push('\n');
+            output.push_str(&" ".repeat(line_numbers_length));
+            output.push_str(" |    ");
+            output.push_str(&"^".repeat(self.1 - self.0));
+        } else {
+            for (i, line) in lines.iter().enumerate() {
+                output.push_str(&(line_numbers.0 + i).to_string());
+                output.push_str(" |  > ");
+                output.push_str(line);
+                output.push('\n');
+            }
+
+            output.push_str(&" ".repeat(line_numbers_length));
+            output.push_str(" |");
+        }
         output.push('\n');
 
         output
@@ -266,6 +278,27 @@ mod tests {
   |
 3 |    x = 5m
   |    ^^^
+"
+        )
+    }
+
+    #[test]
+    fn print_multiple_lines() {
+        let input = "
+        part Box:
+            x = 5m
+            y = 6m
+            z = 7m
+        ";
+        let span = Span::from((31, 74, input));
+        assert_eq!(
+            span.print(),
+            "
+  |
+3 |  > x = 5m
+4 |  > y = 6m
+5 |  > z = 7m
+  |
 "
         )
     }
