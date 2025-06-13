@@ -57,15 +57,15 @@ impl Span {
     /// ";
     /// assert_eq!(
     ///     Span::from((15, 20, input)).lines(),
-    ///     (2, 2)
+    ///     (3, 3)
     /// );
     /// assert_eq!(
     ///     Span::from((37, 78, input)).lines(),
-    ///     (4, 6)
+    ///     (5, 7)
     /// );
     /// assert_eq!(
     ///     Span::from((1000, 1005, input)).lines(), // if the lines are out of bounds, the total
-    ///     (7, 7)                                   // line number is returned
+    ///     (8, 8)                                   // line number is returned
     /// );
     /// ```
     pub fn lines(&self) -> (usize, usize) {
@@ -87,7 +87,7 @@ impl Span {
             }
         }
 
-        (start_line, end_line)
+        (start_line + 1, end_line + 1)
     }
 
     /// Return the union of two Spans.
@@ -114,6 +114,38 @@ impl Span {
             other.end()
         };
         Span(start, end, self.2.clone())
+    }
+
+    /// Return a text representation of this `Span`.
+    pub fn print(&self) -> String {
+        let line_numbers = self.lines();
+        let lines: Vec<String> = self
+            .2
+            .split('\n')
+            .enumerate()
+            .filter(|(i, _)| i >= &(line_numbers.0 - 1) && i <= &(line_numbers.1 - 1))
+            .map(|(_, line)| line.trim().to_string())
+            .collect();
+        let line_numbers_length = usize::max(
+            line_numbers.0.to_string().len(),
+            line_numbers.1.to_string().len(),
+        );
+
+        let mut output = String::from("\n");
+        output.push_str(&" ".repeat(line_numbers_length));
+        output.push_str(" |\n");
+
+        output.push_str(&line_numbers.0.to_string());
+        output.push_str(" |    ");
+        output.push_str(lines.first().unwrap());
+
+        output.push('\n');
+        output.push_str(&" ".repeat(line_numbers_length));
+        output.push_str(" |    ");
+        output.push_str(&"^".repeat(self.1 - self.0));
+        output.push('\n');
+
+        output
     }
 }
 impl From<(usize, usize)> for Span {
@@ -172,5 +204,69 @@ mod tests {
     fn merge_outside() {
         let span = Span::from((5, 10));
         assert_eq!(span.merge(&Span::from((20, 30))), Span::from((5, 30)))
+    }
+
+    #[test]
+    fn print_single_line() {
+        let input = "
+        part Box:
+            x = 5m
+            y = 6m
+            z = 7m
+        ";
+        let span = Span::from((31, 37, input));
+        assert_eq!(
+            span.print(),
+            "
+  |
+3 |    x = 5m
+  |    ^^^^^^
+"
+        )
+    }
+
+    #[test]
+    fn print_single_line_two_digit_line_number() {
+        let input = "
+        part Box:
+
+
+
+
+
+
+
+            x = 5m
+            y = 6m
+            z = 7m
+        ";
+        let span = Span::from((38, 44, input));
+        assert_eq!(
+            span.print(),
+            "
+   |
+10 |    x = 5m
+   |    ^^^^^^
+"
+        )
+    }
+
+    #[test]
+    fn print_part_of_single_line() {
+        let input = "
+        part Box:
+            x = 5m
+            y = 6m
+            z = 7m
+        ";
+        let span = Span::from((31, 34, input));
+        assert_eq!(
+            span.print(),
+            "
+  |
+3 |    x = 5m
+  |    ^^^
+"
+        )
     }
 }
