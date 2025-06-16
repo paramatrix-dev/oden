@@ -75,15 +75,15 @@ impl Span {
 
         let mut current_line = 0;
         for (i, char) in self.2.chars().enumerate() {
-            if char == '\n' {
-                current_line += 1;
-            }
-
             if i == self.0 {
                 start_line = current_line;
             }
             if i == self.1 {
                 end_line = current_line;
+            }
+
+            if char == '\n' {
+                current_line += 1;
             }
         }
 
