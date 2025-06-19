@@ -1,5 +1,5 @@
 use anvil::Error as AnvilError;
-use std::{error::Error as StdError, fmt, path::PathBuf};
+use std::{error::Error as StdError, path::PathBuf};
 
 use crate::syntax::Span;
 
@@ -210,11 +210,78 @@ impl Error {
             _ => unimplemented!(),
         }
     }
+    pub fn explanation(&self) -> String {
+        match self {
+            Self::Arguments {
+                should,
+                is,
+                span: _,
+            } => {
+                format!(
+                    "arguments should be {} but are {}",
+                    vec_to_string(should),
+                    vec_to_string(is),
+                )
+            }
+            Self::EmptyPart(_) => "can not extrude empty Sketch".into(),
+            Self::ExpectedExpression(_) => "expected an expression".into(),
+            Self::ExpectedIdentifyer(_) => "expected an identifyer, like a variable name".into(),
+            Self::FileNotFound(path) => format!("could not find file '{}'", path.to_string_lossy()),
+            Self::NotCallable(name, _) => format!("{} is not callable", name),
+            Self::StlWrite(path) => format!("could not write STL to '{}'", path.to_string_lossy()),
+            Self::UnexpectedSymbol(_) => "unsupported symbol in file".into(),
+            Self::UnknownFunction(name, _) => format!("function {} is not defined", name),
+            Self::UnknownMethod(name, _) => format!("method {} is not defined", name),
+            Self::UnknownVariable(name, _) => format!("variable {} is not defined", name),
+            Self::UnknownUnit(name, _) => format!("{} is not a supported unit", name),
+        }
+    }
+    pub fn span(&self) -> Option<&Span> {
+        match self {
+            Self::Arguments {
+                should: _,
+                is: _,
+                span,
+            } => Some(span),
+            Self::EmptyPart(span) => Some(span),
+            Self::ExpectedExpression(span) => Some(span),
+            Self::ExpectedIdentifyer(span) => Some(span),
+            Self::FileNotFound(_) => None,
+            Self::NotCallable(_, span) => Some(span),
+            Self::StlWrite(_) => None,
+            Self::UnexpectedSymbol(span) => Some(span),
+            Self::UnknownFunction(_, span) => Some(span),
+            Self::UnknownMethod(_, span) => Some(span),
+            Self::UnknownVariable(_, span) => Some(span),
+            Self::UnknownUnit(_, span) => Some(span),
+        }
+    }
 }
 
 impl StdError for Error {}
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Under construction")
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let text = match self.span() {
+            Some(span) => format!(
+                "error during compilation: {}{}",
+                self.explanation(),
+                span.print()
+            ),
+            None => format!("error during compilation: {}\n", self.explanation()),
+        };
+        write!(f, "{}", text)
     }
+}
+
+fn vec_to_string(v: &Vec<String>) -> String {
+    let mut output = String::from("[");
+    for (i, elem) in v.iter().enumerate() {
+        output.push_str(elem);
+
+        if i < (v.len() - 1) {
+            output.push_str(", ");
+        }
+    }
+    output.push(']');
+    output
 }
