@@ -21,6 +21,6 @@ pub fn compile(source: PathBuf, target: PathBuf) -> Result<(), Error> {
         Err(_) => return Err(Error::FileNotFound(source.clone())),
     };
 
-    let part = compile_input(&input, source)?;
+    let part = compile_input(&input)?;
     Error::from_anvil(part.write_step(target), None)
 }

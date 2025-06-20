@@ -45,7 +45,7 @@ impl Expression {
     /// ```rust
     /// use oden::{Expression, ExprKind, Span};
     ///
-    /// let expr = Expression(ExprKind::Literal("5mm".into()), Span(15, 16, "/file.oden".into()));
+    /// let expr = Expression(ExprKind::Literal("5mm".into()), Span::from((15, 16)));
     /// assert_eq!(expr.kind(), &ExprKind::Literal("5mm".into()))
     /// ```
     pub fn kind(&self) -> &ExprKind {
@@ -58,8 +58,8 @@ impl Expression {
     /// ```rust
     /// use oden::{Expression, ExprKind, Span};
     ///
-    /// let expr = Expression(ExprKind::Literal("5mm".into()), Span(15, 16, "/file.oden".into()));
-    /// assert_eq!(expr.span(), &Span(15, 16, "/file.oden".into()))
+    /// let expr = Expression(ExprKind::Literal("5mm".into()), Span::from((15, 16)));
+    /// assert_eq!(expr.span(), &Span::from((15, 16)))
     /// ```
     pub fn span(&self) -> &Span {
         &self.1

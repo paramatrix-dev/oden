@@ -7,7 +7,7 @@ fn test_cube() {
         part Box:
             part.add(Cube(4mm))
         ";
-    let actual = compile_input(text, "".into());
+    let actual = compile_input(text);
     assert_eq!(actual, Ok(Cuboid::from_mm(4., 4., 4.)))
 }
 
@@ -17,7 +17,7 @@ fn test_cuboid() {
         part Box:
             part.add(Cuboid(4mm, 5mm, 6mm))
         ";
-    let actual = compile_input(text, "".into());
+    let actual = compile_input(text);
     assert_eq!(actual, Ok(Cuboid::from_mm(4., 5., 6.)))
 }
 
@@ -27,7 +27,7 @@ fn test_sphere() {
         part Box:
             part.add(Sphere(5mm))
         ";
-    let actual = compile_input(text, "".into());
+    let actual = compile_input(text);
     assert_eq!(actual, Ok(Sphere::from_radius(5.mm())))
 }
 
@@ -37,7 +37,7 @@ fn test_cylinder() {
         part Box:
             part.add(Cylinder(5mm, 6mm))
         ";
-    let actual = compile_input(text, "".into());
+    let actual = compile_input(text);
     assert_eq!(actual, Ok(Cylinder::from_radius(5.mm(), 6.mm())))
 }
 
@@ -47,7 +47,7 @@ fn test_centered_cuboid_mixed_units() {
         part Box:
             part.add(Cuboid(4m, 5mm, 6mm))
         ";
-    let actual = compile_input(text, "".into());
+    let actual = compile_input(text);
     assert_eq!(actual, Ok(Cuboid::from_mm(4000., 5., 6.)))
 }
 
@@ -57,10 +57,7 @@ fn test_centered_cuboid_different_spacing() {
         part Box:
             part.add(  Cuboid(4mm,5mm,  6mm ) )
         ";
-    assert_eq!(
-        compile_input(text, "".into()),
-        Ok(Cuboid::from_mm(4., 5., 6.))
-    )
+    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(4., 5., 6.)))
 }
 
 #[test]
@@ -72,10 +69,7 @@ fn test_centered_cuboid_with_variable() {
             height = 6mm
             part.add(Cuboid(width, lenght, height))
         ";
-    assert_eq!(
-        compile_input(text, "".into()),
-        Ok(Cuboid::from_mm(4., 5., 6.))
-    )
+    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(4., 5., 6.)))
 }
 
 #[test]
@@ -86,7 +80,7 @@ fn test_add_two_cuboids() {
             part.add(Cuboid(5mm, 1mm, 1mm))
         ";
     assert_eq!(
-        compile_input(text, "".into()),
+        compile_input(text),
         Ok(Cuboid::from_mm(1., 1., 5.).add(&Cuboid::from_mm(5., 1., 1.)))
     )
 }
@@ -99,7 +93,7 @@ fn test_subtract() {
             part.subtract(Cuboid(1mm, 1mm, 1mm))
         ";
     assert_eq!(
-        compile_input(text, "".into()),
+        compile_input(text),
         Ok(Cuboid::from_mm(1., 1., 5.).subtract(&Cuboid::from_mm(1., 1., 1.)))
     )
 }
@@ -112,7 +106,7 @@ fn test_intersect() {
             part.intersect(Cuboid(1mm, 1mm, 1mm))
         ";
     assert_eq!(
-        compile_input(text, "".into()),
+        compile_input(text),
         Ok(Cuboid::from_mm(1., 1., 5.).intersect(&Cuboid::from_mm(1., 1., 1.)))
     )
 }
@@ -124,7 +118,7 @@ fn test_move_to() {
             part.add(Cuboid(5mm, 5mm, 5mm).move_to(1mm, 1mm, 1mm))
         ";
     assert_eq!(
-        compile_input(text, "".into()),
+        compile_input(text),
         Ok(Cuboid::from_mm(5., 5., 5.).move_to(point!(1.mm(), 1.mm(), 1.mm())))
     )
 }
@@ -143,7 +137,7 @@ fn test_statement_boogaloo() {
             )
         ";
     assert_eq!(
-        compile_input(text, "".into()),
+        compile_input(text),
         Ok(Cuboid::from_mm(1., 1., 5.).add(&Cuboid::from_mm(5., 1., 1.)))
     )
 }
@@ -155,10 +149,7 @@ fn test_comment() {
             // this is a comment and not valid oden code
             part.add(Cube(5mm))
         ";
-    assert_eq!(
-        compile_input(text, "".into()),
-        Ok(Cuboid::from_mm(5., 5., 5.))
-    )
+    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(5., 5., 5.)))
 }
 
 #[test]
@@ -167,10 +158,7 @@ fn test_inline_comment() {
         part Box:
             part.add(Cube(5mm)) // this is a comment and not valid oden code
         ";
-    assert_eq!(
-        compile_input(text, "".into()),
-        Ok(Cuboid::from_mm(5., 5., 5.))
-    )
+    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(5., 5., 5.)))
 }
 
 #[test]
@@ -181,7 +169,7 @@ fn test_rectangle_extrude() {
             part.add(sketch.extrude(Plane.XY(), 7mm))
         ";
     assert_eq!(
-        compile_input(text, "".into()),
+        compile_input(text),
         Ok(Rectangle::from_dim(5.mm(), 6.mm())
             .extrude(Plane::xy(), 7.mm())
             .unwrap())
@@ -195,7 +183,7 @@ fn test_cuboid_circular_pattern() {
             part = Cuboid(1m, 1m, 1m).move_to(1m, 1m, 1m).circular_pattern(Axis.Z(), 4)
         ";
     assert_eq!(
-        compile_input(text, "".into()),
+        compile_input(text),
         Ok(Cuboid::from_m(1., 1., 1.)
             .move_to(point!(1.m(), 1.m(), 1.m()))
             .circular_pattern(Axis::<3>::z(), 4))
