@@ -124,7 +124,7 @@ impl Span {
             .split('\n')
             .enumerate()
             .filter(|(i, _)| i >= &(line_numbers.0 - 1) && i <= &(line_numbers.1 - 1))
-            .map(|(_, line)| line.trim().to_string())
+            .map(|(_, line)| line.to_string())
             .collect();
         let line_numbers_length = usize::max(
             line_numbers.0.to_string().len(),
@@ -137,17 +137,18 @@ impl Span {
 
         if lines.len() == 1 {
             output.push_str(&line_numbers.0.to_string());
-            output.push_str(" |    ");
+            output.push_str(" | ");
             output.push_str(lines.first().unwrap());
 
             output.push('\n');
             output.push_str(&" ".repeat(line_numbers_length));
-            output.push_str(" |    ");
+            output.push_str(" |");
+            output.push_str(&" ".repeat(self.first_line_offset()));
             output.push_str(&"^".repeat(self.1 - self.0));
         } else {
             for (i, line) in lines.iter().enumerate() {
                 output.push_str(&(line_numbers.0 + i).to_string());
-                output.push_str(" |  > ");
+                output.push_str(" | > ");
                 output.push_str(line);
                 output.push('\n');
             }
@@ -158,6 +159,22 @@ impl Span {
         output.push('\n');
 
         output
+    }
+
+    fn first_line_offset(&self) -> usize {
+        let mut first_line_offset = 0;
+        for (i, ch) in self.2.chars().enumerate() {
+            first_line_offset += 1;
+
+            if ch == '\n' {
+                first_line_offset = 0;
+            }
+
+            if i == self.0 {
+                break;
+            }
+        }
+        first_line_offset
     }
 }
 impl From<(usize, usize)> for Span {
@@ -221,18 +238,18 @@ mod tests {
     #[test]
     fn print_single_line() {
         let input = "
-        part Box:
-            x = 5m
-            y = 6m
-            z = 7m
+part Box:
+    x = 5m
+    y = 6m
+    z = 7m
         ";
-        let span = Span::from((31, 37, input));
+        let span = Span::from((15, 21, input));
         assert_eq!(
             span.print(),
             "
   |
-3 |    x = 5m
-  |    ^^^^^^
+3 |     x = 5m
+  |     ^^^^^^
 "
         )
     }
@@ -240,7 +257,7 @@ mod tests {
     #[test]
     fn print_single_line_two_digit_line_number() {
         let input = "
-        part Box:
+part Box:
 
 
 
@@ -248,17 +265,17 @@ mod tests {
 
 
 
-            x = 5m
-            y = 6m
-            z = 7m
+    x = 5m
+    y = 6m
+    z = 7m
         ";
-        let span = Span::from((38, 44, input));
+        let span = Span::from((22, 28, input));
         assert_eq!(
             span.print(),
             "
    |
-10 |    x = 5m
-   |    ^^^^^^
+10 |     x = 5m
+   |     ^^^^^^
 "
         )
     }
@@ -266,18 +283,18 @@ mod tests {
     #[test]
     fn print_part_of_single_line() {
         let input = "
-        part Box:
-            x = 5m
-            y = 6m
-            z = 7m
+part Box:
+    x = 5m
+    y = 6m
+    z = 7m
         ";
-        let span = Span::from((31, 34, input));
+        let span = Span::from((18, 21, input));
         assert_eq!(
             span.print(),
             "
   |
-3 |    x = 5m
-  |    ^^^
+3 |     x = 5m
+  |        ^^^
 "
         )
     }
@@ -285,19 +302,19 @@ mod tests {
     #[test]
     fn print_multiple_lines() {
         let input = "
-        part Box:
-            x = 5m
-            y = 6m
-            z = 7m
+part Box:
+    x = 5m
+    y = 6m
+    z = 7m
         ";
-        let span = Span::from((31, 74, input));
+        let span = Span::from((15, 43, input));
         assert_eq!(
             span.print(),
             "
   |
-3 |  > x = 5m
-4 |  > y = 6m
-5 |  > z = 7m
+3 | >     x = 5m
+4 | >     y = 6m
+5 | >     z = 7m
   |
 "
         )
