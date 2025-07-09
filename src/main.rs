@@ -22,8 +22,7 @@ struct Args {
 /// Compile an oden file and write the resulting shape into an STEP file.
 fn main() {
     let args = Args::parse();
-    match (compile(args.source, args.target), args.quiet) {
-        (Err(error), false) => println!("{}", error),
-        _ => (),
+    if let (Err(error), false) = (compile(args.source, args.target), args.quiet) {
+        println!("{}", error)
     }
 }

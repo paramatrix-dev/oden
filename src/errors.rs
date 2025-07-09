@@ -267,13 +267,13 @@ impl std::fmt::Display for Error {
                 self.explanation(),
                 span.print()
             ),
-            None => format!("error during compilation: {}\n", self.explanation()),
+            None => format!("error: {}\n", self.explanation()),
         };
         write!(f, "{}", text)
     }
 }
 
-fn vec_to_string(v: &Vec<String>) -> String {
+fn vec_to_string(v: &[String]) -> String {
     let mut output = String::from("[");
     for (i, elem) in v.iter().enumerate() {
         output.push_str(elem);
