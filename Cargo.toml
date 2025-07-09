@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anvil = { git = "https://github.com/paramatrix-dev/anvil.git", rev = "29c09c793059e21d17108ac20221caa385861399" }
+anvil = { git = "https://github.com/paramatrix-dev/anvil.git", rev = "c75f13d71f239d51d9da07e6f45785a14181b59e" }
 clap = { version = "4.5.32", features = ["derive"] }
 downcast-rs = "2.0.1"
 dyn-clone = "1.0.19"

@@ -48,7 +48,7 @@ mod tests {
         Member,
         syntax::{Span, expression::ExprKind},
     };
-    use anvil::{Cuboid, IntoLength, Length};
+    use anvil::{Cuboid, IntoLength};
 
     #[test]
     fn part_declaration() {
@@ -70,7 +70,7 @@ mod tests {
         assert!(statement.execute(&mut namespace).is_ok());
         assert_eq!(
             namespace.get(&"height".into()),
-            Some(&Member::Instance(Box::new(Length::from_mm(5.))))
+            Some(&Member::Instance(Box::new(5.mm())))
         )
     }
 

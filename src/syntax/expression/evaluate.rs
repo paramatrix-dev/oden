@@ -42,14 +42,14 @@ fn eval_args(args: &Vec<Expression>, namespace: &PartNamespace) -> Result<Vec<Me
 mod tests {
     use super::*;
     use crate::syntax::Span;
-    use anvil::{Cuboid, Length};
+    use anvil::{Cuboid, IntoLength};
 
     fn expr_literal(value: &str) -> Expression {
         Expression(ExprKind::Literal(value.into()), Span::empty())
     }
 
     fn length_val(mm: f64) -> Member {
-        Member::Instance(Box::new(Length::from_mm(mm)))
+        Member::Instance(Box::new(mm.mm()))
     }
 
     #[test]
@@ -70,7 +70,7 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Member::Instance(Box::new(Length::from_mm(5.)))),
+            Ok(Member::Instance(Box::new(5.mm()))),
         )
     }
 
@@ -99,7 +99,11 @@ mod tests {
 
         assert_eq!(
             expression.evaluate(&namespace),
-            Ok(Member::Instance(Box::new(Cuboid::from_mm(5., 6., 7.)))),
+            Ok(Member::Instance(Box::new(Cuboid::from_dim(
+                5.mm(),
+                6.mm(),
+                7.mm()
+            )))),
         )
     }
 
@@ -139,7 +143,11 @@ mod tests {
         assert_eq!(
             expression.evaluate(&namespace),
             Ok(Member::Instance(Box::new(
-                Cuboid::from_mm(1., 1., 5.).add(&Cuboid::from_mm(5., 1., 1.))
+                Cuboid::from_dim(1.mm(), 1.mm(), 5.mm()).add(&Cuboid::from_dim(
+                    5.mm(),
+                    1.mm(),
+                    1.mm()
+                ))
             ))),
         )
     }

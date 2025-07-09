@@ -8,7 +8,7 @@ fn test_cube() {
             part.add(Cube(4mm))
         ";
     let actual = compile_input(text);
-    assert_eq!(actual, Ok(Cuboid::from_mm(4., 4., 4.)))
+    assert_eq!(actual, Ok(Cuboid::from_dim(4.mm(), 4.mm(), 4.mm())))
 }
 
 #[test]
@@ -18,7 +18,7 @@ fn test_cuboid() {
             part.add(Cuboid(4mm, 5mm, 6mm))
         ";
     let actual = compile_input(text);
-    assert_eq!(actual, Ok(Cuboid::from_mm(4., 5., 6.)))
+    assert_eq!(actual, Ok(Cuboid::from_dim(4.mm(), 5.mm(), 6.mm())))
 }
 
 #[test]
@@ -48,7 +48,7 @@ fn test_centered_cuboid_mixed_units() {
             part.add(Cuboid(4m, 5mm, 6mm))
         ";
     let actual = compile_input(text);
-    assert_eq!(actual, Ok(Cuboid::from_mm(4000., 5., 6.)))
+    assert_eq!(actual, Ok(Cuboid::from_dim(4000.mm(), 5.mm(), 6.mm())))
 }
 
 #[test]
@@ -57,7 +57,10 @@ fn test_centered_cuboid_different_spacing() {
         part Box:
             part.add(  Cuboid(4mm,5mm,  6mm ) )
         ";
-    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(4., 5., 6.)))
+    assert_eq!(
+        compile_input(text),
+        Ok(Cuboid::from_dim(4.mm(), 5.mm(), 6.mm()))
+    )
 }
 
 #[test]
@@ -69,7 +72,10 @@ fn test_centered_cuboid_with_variable() {
             height = 6mm
             part.add(Cuboid(width, lenght, height))
         ";
-    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(4., 5., 6.)))
+    assert_eq!(
+        compile_input(text),
+        Ok(Cuboid::from_dim(4.mm(), 5.mm(), 6.mm()))
+    )
 }
 
 #[test]
@@ -81,7 +87,7 @@ fn test_add_two_cuboids() {
         ";
     assert_eq!(
         compile_input(text),
-        Ok(Cuboid::from_mm(1., 1., 5.).add(&Cuboid::from_mm(5., 1., 1.)))
+        Ok(Cuboid::from_dim(1.mm(), 1.mm(), 5.mm()).add(&Cuboid::from_dim(5.mm(), 1.mm(), 1.mm())))
     )
 }
 
@@ -94,7 +100,13 @@ fn test_subtract() {
         ";
     assert_eq!(
         compile_input(text),
-        Ok(Cuboid::from_mm(1., 1., 5.).subtract(&Cuboid::from_mm(1., 1., 1.)))
+        Ok(
+            Cuboid::from_dim(1.mm(), 1.mm(), 5.mm()).subtract(&Cuboid::from_dim(
+                1.mm(),
+                1.mm(),
+                1.mm()
+            ))
+        )
     )
 }
 
@@ -107,7 +119,13 @@ fn test_intersect() {
         ";
     assert_eq!(
         compile_input(text),
-        Ok(Cuboid::from_mm(1., 1., 5.).intersect(&Cuboid::from_mm(1., 1., 1.)))
+        Ok(
+            Cuboid::from_dim(1.mm(), 1.mm(), 5.mm()).intersect(&Cuboid::from_dim(
+                1.mm(),
+                1.mm(),
+                1.mm()
+            ))
+        )
     )
 }
 
@@ -119,7 +137,7 @@ fn test_move_to() {
         ";
     assert_eq!(
         compile_input(text),
-        Ok(Cuboid::from_mm(5., 5., 5.).move_to(point!(1.mm(), 1.mm(), 1.mm())))
+        Ok(Cuboid::from_dim(5.mm(), 5.mm(), 5.mm()).move_to(point!(1.mm(), 1.mm(), 1.mm())))
     )
 }
 
@@ -138,7 +156,7 @@ fn test_statement_boogaloo() {
         ";
     assert_eq!(
         compile_input(text),
-        Ok(Cuboid::from_mm(1., 1., 5.).add(&Cuboid::from_mm(5., 1., 1.)))
+        Ok(Cuboid::from_dim(1.mm(), 1.mm(), 5.mm()).add(&Cuboid::from_dim(5.mm(), 1.mm(), 1.mm())))
     )
 }
 
@@ -149,7 +167,10 @@ fn test_comment() {
             // this is a comment and not valid oden code
             part.add(Cube(5mm))
         ";
-    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(5., 5., 5.)))
+    assert_eq!(
+        compile_input(text),
+        Ok(Cuboid::from_dim(5.mm(), 5.mm(), 5.mm()))
+    )
 }
 
 #[test]
@@ -158,7 +179,10 @@ fn test_inline_comment() {
         part Box:
             part.add(Cube(5mm)) // this is a comment and not valid oden code
         ";
-    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(5., 5., 5.)))
+    assert_eq!(
+        compile_input(text),
+        Ok(Cuboid::from_dim(5.mm(), 5.mm(), 5.mm()))
+    )
 }
 
 #[test]
@@ -184,7 +208,7 @@ fn test_cuboid_circular_pattern() {
         ";
     assert_eq!(
         compile_input(text),
-        Ok(Cuboid::from_m(1., 1., 1.)
+        Ok(Cuboid::from_dim(1.m(), 1.m(), 1.m())
             .move_to(point!(1.m(), 1.m(), 1.m()))
             .circular_pattern(Axis::<3>::z(), 4))
     )

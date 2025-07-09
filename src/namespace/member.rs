@@ -1,4 +1,4 @@
-use anvil::{Angle, Length};
+use anvil::{IntoAngle, IntoLength};
 use regex::Regex;
 
 use crate::{Error, Span, Type, namespace::traits::Instance};
@@ -18,11 +18,11 @@ impl Member {
         // TODO: Add remaining units
         match unit {
             "" => Ok(Member::Instance(Box::new(number))),
-            "m" => Ok(Member::Instance(Box::new(Length::from_m(number)))),
-            "cm" => Ok(Member::Instance(Box::new(Length::from_cm(number)))),
-            "mm" => Ok(Member::Instance(Box::new(Length::from_mm(number)))),
-            "deg" => Ok(Member::Instance(Box::new(Angle::from_deg(number)))),
-            "rad" => Ok(Member::Instance(Box::new(Angle::from_rad(number)))),
+            "m" => Ok(Member::Instance(Box::new(number.m()))),
+            "cm" => Ok(Member::Instance(Box::new(number.cm()))),
+            "mm" => Ok(Member::Instance(Box::new(number.mm()))),
+            "deg" => Ok(Member::Instance(Box::new(number.deg()))),
+            "rad" => Ok(Member::Instance(Box::new(number.rad()))),
             _ => Err(Error::UnknownUnit(unit.into(), span)),
         }
     }

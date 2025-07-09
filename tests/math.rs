@@ -35,5 +35,8 @@ fn test_math_in_part_construction() {
             size = 1mm * factor
             part.add(Cube(size))
         ";
-    assert_eq!(compile_input(text), Ok(Cuboid::from_mm(5., 5., 5.)))
+    assert_eq!(
+        compile_input(text),
+        Ok(Cuboid::from_dim(5.mm(), 5.mm(), 5.mm()))
+    )
 }
